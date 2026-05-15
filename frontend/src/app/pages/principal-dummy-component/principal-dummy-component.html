@@ -1,0 +1,29 @@
+<div class="principal-dummy-page p-4">
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <app-dummy-list
+        [dummies]="dummies"
+        (edit)="onEdit($event)"
+        (remove)="onRemove($event)"
+      ></app-dummy-list>
+    </div>
+
+    <div>
+      <!-- Se muestra el formulario cuando se crea o edita -->
+      <div *ngIf="selectedDummy !== undefined; else createMode">
+        <app-dummy-form
+          [dummy]="selectedDummy"
+          (save)="onUpdate($event)"
+          (cancel)="onFormSavedOrCancelled()"
+        ></app-dummy-form>
+      </div>
+
+      <ng-template #createMode>
+        <app-dummy-form
+          (save)="onCreate($event)"
+          (cancel)="onFormSavedOrCancelled()"
+        ></app-dummy-form>
+      </ng-template>
+    </div>
+  </div>
+</div>

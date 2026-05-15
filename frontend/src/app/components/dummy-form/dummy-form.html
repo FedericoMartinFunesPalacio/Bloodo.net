@@ -1,0 +1,40 @@
+<mat-card class="p-4">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="name" />
+      @if (name?.invalid && (name?.touched || name?.dirty)) {
+        <mat-error *ngIf="name?.errors?.['required']">El nombre es obligatorio</mat-error>
+        <mat-error *ngIf="name?.errors?.['maxlength']">Máximo 100 caracteres</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Descripción</mat-label>
+      <input matInput formControlName="description" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Serial</mat-label>
+      <input matInput formControlName="serialNumber" />
+      @if (serialNumber?.invalid && (serialNumber?.touched || serialNumber?.dirty)) {
+        <mat-error *ngIf="serialNumber?.errors?.['required']">El serial es obligatorio</mat-error>
+        <mat-error *ngIf="serialNumber?.errors?.['maxlength']">Máximo 50 caracteres</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Fecha de creación</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="createdAt" />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <div class="flex gap-2 justify-end">
+      <button mat-stroked-button color="primary" type="button" (click)="onCancel()">Cancelar</button>
+      <button mat-flat-button color="primary" type="submit">Guardar</button>
+    </div>
+
+  </form>
+</mat-card>
