@@ -6,21 +6,35 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "organizer")
+@Entity(name = "organizer_empress")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrganizerEntity {
+public class OrganizerEmpEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //Maybe a person (a patient what needs blood urgently), maybe a organization (blood bank, cooperative, etc)
     @Column(nullable = false, name = "full_name")
     private String fullName;
 
-    //DNI or CUIT
+    //CUIT
     @Column(nullable = false)
     private String document;
+
+    @Column(nullable = false)
+    private String direction;
+
+    @Column(nullable = false)
+    private Double latitude;
+
+    @Column(nullable = false)
+    private Double longitude;
+
+    @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = false, name = "phone_number")
+    private String phoneNumber;
 }
