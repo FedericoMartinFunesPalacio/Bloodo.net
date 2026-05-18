@@ -51,4 +51,10 @@ public class DonorEntity {
 
     @Column(nullable = false)
     private Double weight; //IN KILOGRAMS
+
+    @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = false, name = "phone_number")
+    private String phoneNumber;
 }
