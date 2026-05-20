@@ -1,25 +1,33 @@
 package com.FedericoFunes.app_service.entities;
 
+import com.FedericoFunes.app_service.entities.enums.Gender;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "organizer_empress")
+import java.time.LocalDate;
+
+@Entity(name = "organizer_per")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrganizerEmpEntity {
+public class OrganizerPerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, name = "full_name")
-    private String fullName;
+    @Column(nullable = false, name = "first_name")
+    private String firstName;
 
-    //CUIT
+    @Column(nullable = false, name = "last_name")
+    private String lastName;
+
+    @Column(nullable = false, name = "birthdate")
+    private LocalDate birthdate;
+
     @Column(nullable = false)
     private String document;
 
@@ -31,6 +39,10 @@ public class OrganizerEmpEntity {
 
     @Column(nullable = false)
     private Double longitude;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Gender gender;
 
     @Column(nullable = false)
     private String email;
