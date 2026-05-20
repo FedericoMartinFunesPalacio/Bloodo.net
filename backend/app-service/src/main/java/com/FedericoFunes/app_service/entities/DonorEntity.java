@@ -57,4 +57,7 @@ public class DonorEntity {
 
     @Column(nullable = false, name = "phone_number")
     private String phoneNumber;
+
+    @Column(name = "is_active")
+    private Boolean isActive;
 }
