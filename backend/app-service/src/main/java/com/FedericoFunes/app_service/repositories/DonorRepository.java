@@ -1,4 +1,7 @@
 package com.FedericoFunes.app_service.repositories;
 
-public interface DonorRepository {
+import com.FedericoFunes.app_service.entities.DonorEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface DonorRepository extends JpaRepository<DonorEntity, Long> {
 }
