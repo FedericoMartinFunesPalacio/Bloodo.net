@@ -19,4 +19,5 @@ public interface CampaignsService {
     ResponseCampaignsDTO finishCampaign(Long campaignId, java.time.LocalDate endDate);
     List<ResponseCampaignsDTO> getAllFinishedCampaigns();
     List<SubscribedDonorDTO> getSubscribedDonors(Long campaignId);
+    void notifyUpcomingCampaign(Long campaignId);
 }

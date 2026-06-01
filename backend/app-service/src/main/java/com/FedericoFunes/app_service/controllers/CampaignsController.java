@@ -101,4 +101,12 @@ public class CampaignsController {
     public ResponseEntity<List<SubscribedDonorDTO>> getAllDonorsByCampaign(@PathVariable Long campaignId) {
         return ResponseEntity.ok(campaignsService.getSubscribedDonors(campaignId));
     }
+
+    @Operation(summary = "Notificar próxima campaña", description = "Notifica por email si la campaña esta próxima.")
+    @ApiResponse(responseCode = "200", description = "No devuelve nada, notifica via email")
+    @PreAuthorize("hasAnyRole('ADMIN','ORGANIZER')")
+    @PostMapping("/{id}/notify-upcoming")
+    public void notifyUpcoming(@PathVariable Long id) {
+        campaignsService.notifyUpcomingCampaign(id);
+    }
 }
