@@ -9,3 +9,4 @@
 # Ignorar archivo .env
 .env
 backend/app-service/.env
+backend/.env
