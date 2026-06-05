@@ -1,5 +1,6 @@
 package com.FedericoFunes.app_service.services.external;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
+@RequiredArgsConstructor
 public class GoogleMapsService {
 
     @Value("${google.maps.api.key}")

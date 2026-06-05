@@ -8,4 +8,6 @@
 /dataSources.local.xml
 # Ignorar archivo .env
 .env
+backend/.env
 backend/app-service/.env
+
