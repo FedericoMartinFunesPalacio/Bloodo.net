@@ -16,6 +16,10 @@ import lombok.NoArgsConstructor;
 public class ResponseUsersDTO {
     @NotBlank
     @NotNull
+    private Long id;
+
+    @NotBlank
+    @NotNull
     private String username;
 
     @NotBlank

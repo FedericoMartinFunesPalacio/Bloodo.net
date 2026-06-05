@@ -21,6 +21,7 @@ public class UsersServiceImpl implements UsersService {
     private ResponseUsersDTO EntityToDTO(UsersEntity usersEntity) {
         try {
             ResponseUsersDTO dto = new ResponseUsersDTO();
+            dto.setId(usersEntity.getId());
             dto.setUsername(usersEntity.getUsername());
             dto.setEmail(usersEntity.getEmail());
             dto.setPhone(usersEntity.getPhone());
