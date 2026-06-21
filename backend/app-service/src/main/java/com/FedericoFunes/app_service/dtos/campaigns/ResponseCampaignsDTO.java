@@ -15,6 +15,9 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResponseCampaignsDTO {
+
+    private Long id;
+
     @JsonProperty("title")
     private String title;
 

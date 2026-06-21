@@ -22,7 +22,7 @@ public class UsersEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String username;
 
     @Column(nullable = false)
@@ -37,6 +37,9 @@ public class UsersEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Roles role;
+
+    @Column(nullable = false)
+    private Long roleId; //Donor or Org ID
 
     @Column(name = "is_active")
     private Boolean isActive = true;

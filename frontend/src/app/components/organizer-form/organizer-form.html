@@ -1,0 +1,233 @@
+<div class="organizer-form-container">
+  <div class="organizer-form-header">
+    <h1>@if (isEditMode) { Editar Organizador } @else { Registrar Organizador }</h1>
+  </div>
+
+  @if (!organizerType && !isEditMode) {
+    <div class="type-selector">
+      <h2>¿Qué tipo de organizador querés registrar?</h2>
+      <div class="type-cards">
+        <div class="type-card" (click)="selectType('emp')">
+          <div class="type-icon"><span class="mat-icon">business</span></div>
+          <h3>Empresa / Organización</h3>
+          <p>Registrar como entidad empresarial u organización</p>
+        </div>
+        <div class="type-card" (click)="selectType('per')">
+          <div class="type-icon"><span class="mat-icon">person</span></div>
+          <h3>Persona</h3>
+          <p>Registrar como organizador individual</p>
+        </div>
+      </div>
+    </div>
+  } @else {
+    @if (!isEditMode) {
+      <div class="type-badge">
+        @if (organizerType === 'emp') {
+          <span><span class="mat-icon">business</span> Empresa / Organización</span>
+        } @else {
+          <span><span class="mat-icon">person</span> Persona</span>
+        }
+        <button class="btn-change-type" (click)="organizerType = null">Cambiar</button>
+      </div>
+    }
+
+    @if (loading) {
+      <div class="loading">Cargando...</div>
+    } @else if (organizerType === 'emp') {
+      <form (ngSubmit)="onSubmit()" class="organizer-form">
+        <div class="form-section">
+          <h3>Datos de la Organización</h3>
+
+          <div class="form-group">
+            <label for="fullName">Nombre de la Organización *</label>
+            <input
+              type="text"
+              id="fullName"
+              [(ngModel)]="formEmp.fullName"
+              name="fullName"
+              placeholder="Ej: Banco de Sangre Central"
+              required
+            />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="documentEmp">CUIT / Documento *</label>
+              <input
+                type="text"
+                id="documentEmp"
+                [(ngModel)]="formEmp.document"
+                name="document"
+                placeholder="Ej: 30-12345678-9"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="emailEmp">Email *</label>
+              <input
+                type="email"
+                id="emailEmp"
+                [(ngModel)]="formEmp.email"
+                name="email"
+                placeholder="Ej: contacto@banco-sangre.com"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="directionEmp">Dirección *</label>
+            <input
+              type="text"
+              id="directionEmp"
+              [(ngModel)]="formEmp.direction"
+              name="direction"
+              placeholder="Ej: Av. Corrientes 1234, CABA"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="phoneNumberEmp">Teléfono *</label>
+            <input
+              type="text"
+              id="phoneNumberEmp"
+              [(ngModel)]="formEmp.phoneNumber"
+              name="phoneNumber"
+              placeholder="Ej: 11-4567-8901"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">
+            @if (isEditMode) { Actualizar Organización } @else { Registrar Organización }
+          </button>
+          <button type="button" class="btn-secondary" (click)="goBack()">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    } @else if (organizerType === 'per') {
+      <form (ngSubmit)="onSubmit()" class="organizer-form">
+        <div class="form-section">
+          <h3>Datos Personales</h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">Nombre *</label>
+              <input
+                type="text"
+                id="firstName"
+                [(ngModel)]="formPer.firstName"
+                name="firstName"
+                placeholder="Ej: María"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="lastName">Apellido *</label>
+              <input
+                type="text"
+                id="lastName"
+                [(ngModel)]="formPer.lastName"
+                name="lastName"
+                placeholder="Ej: González"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="birthdate">Fecha de Nacimiento *</label>
+              <input
+                type="date"
+                id="birthdate"
+                [(ngModel)]="formPer.birthdate"
+                name="birthdate"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="gender">Género *</label>
+              <select
+                id="gender"
+                [(ngModel)]="formPer.gender"
+                name="gender"
+                required
+              >
+                @for (g of genders; track g) {
+                  <option [value]="g">{{ g | enumLabel }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="documentPer">Documento *</label>
+              <input
+                type="text"
+                id="documentPer"
+                [(ngModel)]="formPer.document"
+                name="document"
+                placeholder="Ej: 12345678"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="emailPer">Email *</label>
+              <input
+                type="email"
+                id="emailPer"
+                [(ngModel)]="formPer.email"
+                name="email"
+                placeholder="Ej: maria@email.com"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="directionPer">Dirección *</label>
+            <input
+              type="text"
+              id="directionPer"
+              [(ngModel)]="formPer.direction"
+              name="direction"
+              placeholder="Ej: Calle Falsa 123, Buenos Aires"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="phoneNumberPer">Teléfono *</label>
+            <input
+              type="text"
+              id="phoneNumberPer"
+              [(ngModel)]="formPer.phoneNumber"
+              name="phoneNumber"
+              placeholder="Ej: 11-5555-1234"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">
+            @if (isEditMode) { Actualizar Organizador } @else { Registrar Organizador }
+          </button>
+          <button type="button" class="btn-secondary" (click)="goBack()">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    }
+  }
+</div>

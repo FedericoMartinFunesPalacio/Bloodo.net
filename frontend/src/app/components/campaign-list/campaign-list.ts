@@ -1,0 +1,72 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule, Router } from '@angular/router';
+import { CampaignService } from '../../services/campaign.service';
+import { ToastService } from '../../services/toast.service';
+import { EnumLabelPipe } from '../../pipes/enum-label.pipe';
+import { ResponseCampaign } from '../../models/campaign';
+import { animate, stagger } from 'animejs';
+
+@Component({
+  selector: 'app-campaign-list',
+  standalone: true,
+  imports: [CommonModule, RouterModule, EnumLabelPipe],
+  templateUrl: './campaign-list.html',
+  styleUrls: ['./campaign-list.css']
+})
+export class CampaignListComponent implements OnInit {
+  campaigns: ResponseCampaign[] = [];
+  loading = true;
+
+  constructor(
+    private campaignService: CampaignService,
+    private router: Router,
+    private toast: ToastService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadCampaigns();
+  }
+
+  private loadCampaigns(): void {
+    this.loading = true;
+    this.campaignService.getAllCampaigns().subscribe({
+      next: (campaigns) => {
+        this.campaigns = campaigns;
+        this.loading = false;
+        this.animateCards();
+      },
+      error: (err) => {
+        this.toast.error('Error al cargar las campañas');
+        this.loading = false;
+        console.error('Error loading campaigns:', err);
+      }
+    });
+  }
+
+  private animateCards(): void {
+    setTimeout(() => {
+      const header = document.querySelector('.campaign-list-header');
+      const cards = document.querySelectorAll('.campaign-card');
+      if (header) {
+        animate(header as any, { opacity: [0, 1], translateY: [20, 0], duration: 500, ease: 'outQuad' });
+      }
+      if (cards.length) {
+        animate(cards, {
+          opacity: [0, 1],
+          scale: [0.95, 1],
+          translateY: [20, 0],
+          duration: 450,
+          delay: stagger(60, { start: 150 }),
+          ease: 'outQuad'
+        });
+      }
+    }, 50);
+  }
+
+  viewCampaignDetail(id: number | undefined): void {
+    if (id) {
+      this.router.navigate(['/campaigns', id]);
+    }
+  }
+}

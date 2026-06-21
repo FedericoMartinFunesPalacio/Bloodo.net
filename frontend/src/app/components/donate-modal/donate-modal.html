@@ -1,0 +1,56 @@
+@if (visible) {
+  <div class="donate-overlay" (click)="onOverlayClick($event)">
+    <div class="donate-dialog">
+      <div class="donate-header">
+        <span class="donate-icon"><span class="mat-icon">favorite</span></span>
+        <h3>Apoyar Bloodo.net</h3>
+        <button class="donate-close" (click)="close()" [disabled]="loading"><span class="mat-icon">close</span></button>
+      </div>
+
+      <p class="donate-description">
+        Tu donación nos ayuda a seguir conectando donadores con campañas de sangre.
+      </p>
+
+      <div class="amount-presets">
+        @for (amount of presets; track amount) {
+          <button
+            class="preset-btn"
+            [class.selected]="selectedAmount === amount"
+            (click)="selectPreset(amount)"
+            [disabled]="loading"
+          >
+            ${{ amount }}
+          </button>
+        }
+      </div>
+
+      <div class="custom-amount">
+        <label for="customAmount">O ingresá otro monto:</label>
+        <div class="custom-input-wrapper">
+          <span class="currency">$</span>
+          <input
+            type="number"
+            id="customAmount"
+            [(ngModel)]="customAmount"
+            (input)="onCustomAmountChange()"
+            placeholder="0"
+            min="1"
+            [disabled]="loading"
+          />
+        </div>
+      </div>
+
+      <button
+        class="donate-btn"
+        (click)="donate()"
+        [disabled]="loading || currentAmount <= 0"
+      >
+        @if (loading) {
+          Procesando...
+        } @else {
+          Donar ${{ currentAmount || 0 }}
+        }
+      </button>
+    </div>
+  </div>
+}

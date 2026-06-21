@@ -1,0 +1,120 @@
+<div class="my-campaigns-container">
+  <div class="my-campaigns-header">
+    <h1>Mis Campañas</h1>
+    <button class="btn-primary btn-create" routerLink="/campaigns/new">
+      <span class="mat-icon">add</span> Nueva Campaña
+    </button>
+  </div>
+
+  @if (loading) {
+    <div class="loading">Cargando tus campañas...</div>
+  } @else if (campaigns.length === 0) {
+    <div class="empty-state">
+      <p>No tenés campañas creadas aún</p>
+      <button class="btn-primary" routerLink="/campaigns/new">Crear una nueva campaña</button>
+    </div>
+  } @else {
+    <div class="campaigns-grid">
+      @for (campaign of campaigns; track campaign.id) {
+        <div class="campaign-card">
+          <div class="campaign-header">
+            <h2>{{ campaign.title }}</h2>
+          </div>
+
+          <p class="campaign-description">{{ campaign.description }}</p>
+
+          <div class="campaign-details">
+            <div class="detail-item">
+              <span class="label">Fecha Inicio:</span>
+              <span class="value">{{ campaign.startDate }}</span>
+            </div>
+            @if (campaign.endDate) {
+              <div class="detail-item">
+                <span class="label">Fecha Fin:</span>
+                <span class="value">{{ campaign.endDate }}</span>
+              </div>
+            }
+            <div class="detail-item">
+              <span class="label">Horario:</span>
+              <span class="value">{{ campaign.startTime }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Ubicación:</span>
+              <span class="value">{{ campaign.direction }}</span>
+            </div>
+            @if (campaign.bloodGroupRequired || campaign.bloodFactorRequired) {
+              <div class="detail-item">
+                <span class="label">Tipo de Sangre Requerido:</span>
+                <span class="value">
+                  {{ (campaign.bloodGroupRequired || 'Cualquiera') | enumLabel }} -
+                  {{ (campaign.bloodFactorRequired || 'Cualquiera') | enumLabel }}
+                </span>
+              </div>
+            }
+          </div>
+
+          <div class="campaign-actions">
+            <button class="btn-action btn-view" (click)="viewCampaignDetail(campaign.id)" title="Ver Detalle">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+            <button class="btn-action btn-subscribers" (click)="toggleSubscribedList(campaign.id)" title="Ver Suscritos">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </button>
+            <button class="btn-action btn-edit" (click)="editCampaign(campaign.id)" title="Editar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path><path d="m15 5 4 4"></path></svg>
+            </button>
+            <button class="btn-action btn-finish" (click)="openFinishModal(campaign.id)" title="Finalizar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            </button>
+            <button class="btn-action btn-delete" (click)="deleteCampaign(campaign.id)" title="Eliminar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            </button>
+          </div>
+
+          @if (showSubscribedList && selectedCampaignId === campaign.id) {
+            <div class="subscribed-section">
+              <h3>Donadores Suscritos ({{ subscribedDonors.length }})</h3>
+              @if (subscribedDonors.length === 0) {
+                <p class="empty-list">No hay donadores suscritos aún</p>
+              } @else {
+                <div class="donors-table">
+                  <div class="table-header">
+                    <div class="table-cell">Nombre</div>
+                    <div class="table-cell">Email</div>
+                    <div class="table-cell">Documento</div>
+                    <div class="table-cell">Tipo Sangre</div>
+
+                  </div>
+                  @for (donor of subscribedDonors; track donor.document) {
+                    <div class="table-row">
+                      <div class="table-cell">{{ donor.firstName }} {{ donor.lastName }}</div>
+                      <div class="table-cell">{{ donor.email }}</div>
+                      <div class="table-cell">{{ donor.document }}</div>
+                      <div class="table-cell">{{ donor.bloodGroup | enumLabel }} {{ donor.bloodFactor | enumLabel }}</div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
+
+@if (finishCampaignId) {
+  <div class="modal-overlay" (click)="closeFinishModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h2>Finalizar Campaña</h2>
+      <p>Seleccioná la fecha de finalización:</p>
+      <div class="form-group">
+        <input type="date" [(ngModel)]="finishDate" class="finish-date-input" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="closeFinishModal()">Cancelar</button>
+        <button class="btn-primary" (click)="confirmFinish()">Finalizar</button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,101 @@
+<div class="auth-container">
+  <div class="auth-card" [class.role-selection]="!isLoginMode && registerStep === 2">
+    <h1>
+      @if (isLoginMode) { Iniciar Sesión }
+      @else if (registerStep === 1) { Registrarse }
+      @else { ¿Qué tipo de cuenta querés crear? }
+    </h1>
+
+    @if (isLoginMode || registerStep === 1) {
+      <form (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="username">Usuario:</label>
+          <input
+            type="text"
+            id="username"
+            [(ngModel)]="username"
+            name="username"
+            required
+            [disabled]="loading"
+            (keydown.space)="$event.preventDefault()"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Contraseña:</label>
+          <div style="display:flex; align-items:center;">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              id="password"
+              [(ngModel)]="password"
+              name="password"
+              required
+              [disabled]="loading"
+            />
+            <button type="button" (click)="togglePassword()" style="margin-left:8px;">
+              <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        @if (!isLoginMode) {
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input
+              type="email"
+              id="email"
+              [(ngModel)]="email"
+              name="email"
+              required
+              [disabled]="loading"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Teléfono:</label>
+            <input
+              type="tel"
+              id="phone"
+              [(ngModel)]="phone"
+              name="phone"
+              required
+              [disabled]="loading"
+            />
+          </div>
+        }
+
+        @if (isLoginMode) {
+          <div class="forgot-password">
+            <a routerLink="/forgot-password" class="link">¿Olvidaste tu contraseña?</a>
+          </div>
+        }
+
+        <button type="submit" class="btn-submit" [disabled]="loading">
+          @if (loading) { Cargando... } @else { @if (isLoginMode) { Ingresar } @else { Siguiente } }
+        </button>
+      </form>
+    } @else {
+      <div class="role-cards">
+        <div class="role-card" [class.disabled]="loading" (click)="!loading && selectRole(donorRole)">
+          <div class="role-icon"><span class="mat-icon">bloodtype</span></div>
+          <h2>Donador</h2>
+          <p>Sé parte de la cadena de vida donando sangre y ayudando a quienes lo necesitan.</p>
+        </div>
+        <div class="role-card" [class.disabled]="loading" (click)="!loading && selectRole(organizerRole)">
+          <div class="role-icon"><span class="mat-icon">business</span></div>
+          <h2>Organizador</h2>
+          <p>Creá y administrá campañas de donación de sangre en tu comunidad.</p>
+        </div>
+      </div>
+      <button class="btn-back" (click)="goBackToStep1()" [disabled]="loading">← Volver</button>
+    }
+
+    <div class="toggle-mode">
+      @if (isLoginMode) {
+        <p>¿No tienes cuenta? <a (click)="toggleMode()" class="link">Registrarse</a></p>
+      } @else {
+        <p>¿Ya tienes cuenta? <a (click)="toggleMode()" class="link">Iniciar Sesión</a></p>
+      }
+    </div>
+  </div>
+</div>

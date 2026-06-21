@@ -1,7 +1,12 @@
 package com.FedericoFunes.app_service.services.impl;
 
+import com.FedericoFunes.app_service.dtos.campaigns.BloodEstimatedDTO;
+import com.FedericoFunes.app_service.dtos.campaigns.BloodTypeRankingDTO;
+import com.FedericoFunes.app_service.dtos.campaigns.LivesSavedDTO;
 import com.FedericoFunes.app_service.dtos.campaigns.RequestCampaignsDTO;
 import com.FedericoFunes.app_service.dtos.campaigns.ResponseCampaignsDTO;
+import com.FedericoFunes.app_service.dtos.campaigns.TotalBloodEstimatedDTO;
+import com.FedericoFunes.app_service.dtos.campaigns.TotalLivesSavedDTO;
 import com.FedericoFunes.app_service.entities.CampaignsEntity;
 import com.FedericoFunes.app_service.entities.Organizer;
 import com.FedericoFunes.app_service.handlers.BadRequestException;
@@ -22,6 +27,7 @@ import com.FedericoFunes.app_service.entities.OrganizerPerEntity;
 import com.FedericoFunes.app_service.dtos.campaigns.SubscribedDonorDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -46,6 +52,7 @@ public class CampaignsServiceImpl implements CampaignsService {
     private ResponseCampaignsDTO entityToDTO(CampaignsEntity entity) {
         try {
             ResponseCampaignsDTO dto = new ResponseCampaignsDTO();
+            dto.setId(entity.getId());
             dto.setTitle(entity.getTitle());
             dto.setDescription(entity.getDescription());
             dto.setStartDate(entity.getStartDate());
@@ -69,6 +76,7 @@ public class CampaignsServiceImpl implements CampaignsService {
             entity.setDescription(dto.getDescription());
             entity.setStartDate(dto.getStartDate());
             entity.setEndDate(dto.getEndDate());
+            entity.setWasNotify(false);
             entity.setStartTime(dto.getStartTime());
             entity.setDirection(dto.getDirection());
             try {
@@ -178,6 +186,7 @@ public class CampaignsServiceImpl implements CampaignsService {
         List<SubscribedDonorDTO> result = new ArrayList<>();
         for (DonorEntity donor : campaign.getSubscribedDonors()) {
             SubscribedDonorDTO dto = new SubscribedDonorDTO();
+            dto.setId(donor.getId());
             dto.setFirstName(donor.getFirstName());
             dto.setLastName(donor.getLastName());
             dto.setEmail(donor.getEmail());
@@ -189,34 +198,7 @@ public class CampaignsServiceImpl implements CampaignsService {
         }
         return result;
     }
-    private String createHtml (String title, String description, String startDate, String direction, Boolean isNew) {
-        String titleHtml = isNew ? "Nueva campaña de donación" : "Actualización de la campaña de donación";
-        return "<!DOCTYPE html>\n" +
-                "<html>\n" +
-                "<head>\n" +
-                "  <style>\n" +
-                "    body { font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; }\n" +
-                "    .card { background-color: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }\n" +
-                "    h2 { color: #d32f2f; }\n" +
-                "    p { color: #333; }\n" +
-                "    .footer { margin-top: 20px; font-size: 12px; color: #777; }\n" +
-                "  </style>\n" +
-                "</head>\n" +
-                "<body>\n" +
-                "  <div class=\"card\">\n" +
-                "    <h2>"+titleHtml+"</h2>\n" +
-                "    <p><strong>Título:</strong> "+ title +"</p>\n" +
-                "    <p><strong>Descripción:</strong> "+ description +"</p>\n" +
-                "    <p><strong>Fecha:</strong> "+ startDate +"</p>\n" +
-                "    <p><strong>Ubicación:</strong> "+ direction +"</p>\n" +
-                "    <p>¡Gracias por tu compromiso con salvar vidas!</p>\n" +
-                "    <div class=\"footer\">\n" +
-                "      Bloodo.net - Plataforma de donación de sangre\n" +
-                "    </div>\n" +
-                "  </div>\n" +
-                "</body>\n" +
-                "</html>\n";
-    }
+
 
     @Override
     public List<ResponseCampaignsDTO> getAllCampaigns() {
@@ -244,30 +226,9 @@ public class CampaignsServiceImpl implements CampaignsService {
         validateCampaign(campaign);
         CampaignsEntity entity = dtoToEntity(campaign);
         ResponseCampaignsDTO savedCampaing = entityToDTO(campaignsRepository.save(entity));
-        try {
-            List<String> donorEmails = donorService.GetAllDonors()
-                    .stream()
-                    .map(ResponseDonorDTO::getEmail)
-                    .toList();
 
-            emailService.sendBulkHtmlEmail(donorEmails, "Nueva campaña de donación: " + savedCampaing.getTitle(), createHtml(savedCampaing.getTitle(), savedCampaing.getDescription(), savedCampaing.getStartDate().toString(), savedCampaing.getDirection(), true));
+        emailService.notifyCreateCampaign(savedCampaing, donorService.GetAllDonors());
 
-        } catch (Exception e) {
-            try {
-                List<String> donorEmails = donorService.GetAllDonors()
-                        .stream()
-                        .map(ResponseDonorDTO::getEmail)
-                        .toList();
-                String subject = "Nueva campaña de donación: " + savedCampaing.getTitle();
-                String body = "Se ha creado una nueva campaña en " + savedCampaing.getDirection() +
-                    " el día " + savedCampaing.getStartDate() +
-                    ". ¡Te esperamos para donar sangre!";
-                emailService.sendBulkEmail(donorEmails, subject, body);
-            } catch (Exception ex) {
-                throw new ResponseStatusException(HttpStatusCode.valueOf(500), "Error sending emails: " + e.getMessage());
-            }
-            throw new ResponseStatusException(HttpStatusCode.valueOf(500), "Error EmailService sending: " + e.getMessage());
-        }
         return savedCampaing;
     }
 
@@ -301,30 +262,7 @@ public class CampaignsServiceImpl implements CampaignsService {
 
         ResponseCampaignsDTO savedCampaing = entityToDTO(campaignsRepository.save(entity));
 
-        try {
-            List<String> donorEmails = entity.getSubscribedDonors()
-                    .stream()
-                    .map(DonorEntity::getEmail)
-                    .toList();
-
-            emailService.sendBulkHtmlEmail(donorEmails, "Actualización de campaña de donación: " + savedCampaing.getTitle(), createHtml(savedCampaing.getTitle(), savedCampaing.getDescription(), savedCampaing.getStartDate().toString(), savedCampaing.getDirection(), false));
-
-        } catch (Exception e) {
-            try {
-                List<String> donorEmails = donorService.GetAllDonors()
-                        .stream()
-                        .map(ResponseDonorDTO::getEmail)
-                        .toList();
-                String subject = "Actualización de campaña de donación: " + savedCampaing.getTitle();
-                String body = "Se han actualizado los datos de la campaña. Su nueva dirección es en " + savedCampaing.getDirection() +
-                        " el día " + savedCampaing.getStartDate() +
-                        ". ¡Te esperamos para donar sangre!";
-                emailService.sendBulkEmail(donorEmails, subject, body);
-            } catch (Exception ex) {
-                throw new ResponseStatusException(HttpStatusCode.valueOf(500), "Error sending emails: " + e.getMessage());
-            }
-            throw new ResponseStatusException(HttpStatusCode.valueOf(500), "Error EmailService sending: " + e.getMessage());
-        }
+        emailService.notifyUpdateCampaign(savedCampaing, entity.getSubscribedDonors());
 
         return savedCampaing;
     }
@@ -401,40 +339,45 @@ public class CampaignsServiceImpl implements CampaignsService {
                 throw new NotFoundException("Campaign not found, inactive or finished");
             }
             CampaignsEntity campaign = entityOpt.get();
-            long daysBetween = ChronoUnit.DAYS.between(LocalDate.now(), campaign.getStartDate());
+            if (!campaign.getWasNotify() && campaign.getWasNotify() != null) {
+                campaign.setWasNotify(true);
+                campaignsRepository.save(campaign);
+                long daysBetween = ChronoUnit.DAYS.between(LocalDate.now(), campaign.getStartDate());
 
-            if (daysBetween <= 3 && daysBetween >= 0) {
-                List<String> donorEmails = campaign.getSubscribedDonors()
-                        .stream()
-                        .map(DonorEntity::getEmail)
-                        .toList();
+                if (daysBetween <= 3 && daysBetween >= 0) {
+                    List<String> donorEmails = campaign.getSubscribedDonors()
+                            .stream()
+                            .map(DonorEntity::getEmail)
+                            .toList();
 
-                String subject = "Recordatorio: campaña próxima";
-                String bodyHtml = "<!DOCTYPE html>\n" +
-                        "<html>\n" +
-                        "<head>\n" +
-                        "  <style>\n" +
-                        "    body { font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; }\n" +
-                        "    .card { background-color: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }\n" +
-                        "    h2 { color: #d32f2f; }\n" +
-                        "    p { color: #333; }\n" +
-                        "    .footer { margin-top: 20px; font-size: 12px; color: #777; }\n" +
-                        "  </style>\n" +
-                        "</head>\n" +
-                        "<body>\n" +
-                        "  <div class=\"card\">\n" +
-                        "    <h2>Recordatorio de próxima campaña</h2>\n" +
-                        "    <p>La campaña "+ campaign.getTitle() +"</p>\n" +
-                        "    <p>comienza el "+ campaign.getStartDate() +"</p>\n" +
-                        "    <p>¡Te esperamos!</p>\n" +
-                        "    <div class=\"footer\">\n" +
-                        "      Bloodo.net - Plataforma de donación de sangre\n" +
-                        "    </div>\n" +
-                        "  </div>\n" +
-                        "</body>\n" +
-                        "</html>\n";
-                emailService.sendBulkHtmlEmail(donorEmails, subject, bodyHtml);
+                    String subject = "Recordatorio: campaña próxima";
+                    String bodyHtml = "<!DOCTYPE html>\n" +
+                            "<html>\n" +
+                            "<head>\n" +
+                            "  <style>\n" +
+                            "    body { font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; }\n" +
+                            "    .card { background-color: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }\n" +
+                            "    h2 { color: #d32f2f; }\n" +
+                            "    p { color: #333; }\n" +
+                            "    .footer { margin-top: 20px; font-size: 12px; color: #777; }\n" +
+                            "  </style>\n" +
+                            "</head>\n" +
+                            "<body>\n" +
+                            "  <div class=\"card\">\n" +
+                            "    <h2>Recordatorio de próxima campaña</h2>\n" +
+                            "    <p>La campaña "+ campaign.getTitle() +"</p>\n" +
+                            "    <p>comienza el "+ campaign.getStartDate() +"</p>\n" +
+                            "    <p>¡Te esperamos!</p>\n" +
+                            "    <div class=\"footer\">\n" +
+                            "      Bloodo.net - Plataforma de donación de sangre\n" +
+                            "    </div>\n" +
+                            "  </div>\n" +
+                            "</body>\n" +
+                            "</html>\n";
+                    emailService.sendBulkHtmlEmail(donorEmails, subject, bodyHtml);
+                }
             }
+
 
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(500), "Error notify upcoming campaign: " + e.getMessage());
@@ -457,5 +400,101 @@ public class CampaignsServiceImpl implements CampaignsService {
         }
         campaignsRepository.save(campaign);
         return mapDonorsSuscribeEntityToDTO(campaign);
+    }
+
+    @Override
+    public List<BloodEstimatedDTO> getBloodEstimatedPerCampaign() {
+        List<BloodEstimatedDTO> dtos = new ArrayList<>();
+
+        List<Object[]> activeResults = campaignsRepository.countSubscribersPerActiveCampaign();
+        for (Object[] row : activeResults) {
+            Long campaignId = (Long) row[0];
+            String title = (String) row[1];
+            Long count = (Long) row[2];
+            double estimatedMl = count * 450.0;
+            double estimatedLiters = estimatedMl / 1000.0;
+            dtos.add(new BloodEstimatedDTO(campaignId, title, "ACTIVA", count, estimatedMl, estimatedLiters));
+        }
+
+        List<Object[]> finishedResults = campaignsRepository.countSubscribersPerFinishedCampaign();
+        for (Object[] row : finishedResults) {
+            Long campaignId = (Long) row[0];
+            String title = (String) row[1];
+            Long count = (Long) row[2];
+            double estimatedMl = count * 450.0;
+            double estimatedLiters = estimatedMl / 1000.0;
+            dtos.add(new BloodEstimatedDTO(campaignId, title, "FINALIZADA", count, estimatedMl, estimatedLiters));
+        }
+
+        return dtos;
+    }
+
+    @Override
+    public TotalBloodEstimatedDTO getTotalBloodEstimated() {
+        Long totalSubscribers = campaignsRepository.countTotalSubscribers();
+        Long totalCampaigns = campaignsRepository.countTotalCampaigns();
+        double estimatedMl = totalSubscribers * 450.0;
+        double estimatedLiters = estimatedMl / 1000.0;
+        return new TotalBloodEstimatedDTO(totalSubscribers, totalCampaigns, estimatedMl, estimatedLiters);
+    }
+
+    @Override
+    public List<BloodTypeRankingDTO> getBloodTypeRanking(Long campaignId) {
+        CampaignsEntity campaign = campaignsRepository.findById(campaignId)
+                .orElseThrow(() -> new NotFoundException("Campaign not found"));
+
+        if (campaign.getBloodGroupRequired() != null) {
+            return new ArrayList<>();
+        }
+
+        List<Object[]> results = campaignsRepository.countBloodTypesByCampaign(campaignId);
+        List<BloodTypeRankingDTO> dtos = new ArrayList<>();
+        for (Object[] row : results) {
+            String bloodGroup = row[0] != null ? row[0].toString() : "Sin grupo";
+            String bloodFactor = row[1] != null ? row[1].toString() : "Sin factor";
+            String bloodType = bloodGroup + "_" + bloodFactor;
+            Long count = (Long) row[2];
+            dtos.add(new BloodTypeRankingDTO(bloodType, count));
+        }
+        return dtos;
+    }
+
+    @Override
+    public List<LivesSavedDTO> getLivesSavedPerCampaign() {
+        List<LivesSavedDTO> dtos = new ArrayList<>();
+
+        List<Object[]> activeResults = campaignsRepository.countSubscribersPerActiveCampaign();
+        for (Object[] row : activeResults) {
+            Long campaignId = (Long) row[0];
+            String title = (String) row[1];
+            Long count = (Long) row[2];
+            dtos.add(new LivesSavedDTO(campaignId, title, "ACTIVA", count, count * 3));
+        }
+
+        List<Object[]> finishedResults = campaignsRepository.countSubscribersPerFinishedCampaign();
+        for (Object[] row : finishedResults) {
+            Long campaignId = (Long) row[0];
+            String title = (String) row[1];
+            Long count = (Long) row[2];
+            dtos.add(new LivesSavedDTO(campaignId, title, "FINALIZADA", count, count * 3));
+        }
+
+        return dtos;
+    }
+
+    @Override
+    public TotalLivesSavedDTO getTotalLivesSaved() {
+        Long totalSubscribers = campaignsRepository.countTotalSubscribersInFinishedCampaigns();
+        Long totalFinished = campaignsRepository.countFinishedCampaigns();
+        return new TotalLivesSavedDTO(totalSubscribers, totalFinished, totalSubscribers * 3);
+    }
+
+    @Override
+    public List<ResponseCampaignsDTO> getCampaignsByOrganizer(Long organizerId) {
+        List<ResponseCampaignsDTO> result = new ArrayList<>();
+        for (CampaignsEntity entity : campaignsRepository.findByCreatorIdAndIsActiveTrueAndEndDateIsNull(organizerId)) {
+            result.add(entityToDTO(entity));
+        }
+        return result;
     }
 }

@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SubscribedDonorDTO {
+    @JsonProperty("id")
+    private Long id;
+    
     @JsonProperty("first_name")
     private String firstName;
 

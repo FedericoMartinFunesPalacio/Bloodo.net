@@ -1,0 +1,295 @@
+.navbar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.navbar-brand {
+  flex: 1;
+}
+
+.brand-logo {
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: opacity 0.3s;
+  display: block;
+  padding: 15px 0;
+}
+
+.brand-logo:hover {
+  opacity: 0.9;
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.nav-menu {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  align-items: center;
+}
+
+.nav-item {
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item a {
+  color: white;
+  text-decoration: none;
+  padding: 20px 15px;
+  display: block;
+  transition: background-color 0.3s, opacity 0.3s;
+  font-weight: 500;
+}
+
+.nav-item a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-item a.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-bottom: 3px solid white;
+}
+
+.nav-donate {
+  margin-left: auto;
+}
+
+.btn-donate {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s;
+  margin: 10px 15px;
+}
+
+.btn-donate:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+}
+
+@keyframes donatePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(231, 76, 60, 0); }
+}
+
+.btn-donate {
+  animation: donatePulse 2s ease-in-out infinite;
+}
+
+.profile-wrapper {
+  position: relative;
+}
+
+.btn-profile {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  margin-left: 8px;
+}
+
+.btn-profile:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: white;
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  min-width: 280px;
+  overflow: hidden;
+  z-index: 200;
+}
+
+.profile-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  right: 14px;
+  width: 12px;
+  height: 12px;
+  background: white;
+  transform: rotate(45deg);
+  box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.profile-header {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.profile-username {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.profile-fullname {
+  display: block;
+  font-size: 14px;
+  color: #666;
+}
+
+.profile-details {
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.profile-detail {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.profile-detail svg {
+  flex-shrink: 0;
+  color: #999;
+}
+
+.profile-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 20px;
+}
+
+.profile-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: none;
+  background: #f0f0f0;
+  color: #555;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.profile-action:hover {
+  background: #667eea;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  .nav-menu {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    flex-direction: column;
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+  }
+
+  .nav-menu.active {
+    max-height: 500px;
+  }
+
+  .nav-item {
+    width: 100%;
+  }
+
+  .nav-item a {
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .nav-item a.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-left: 4px solid white;
+  }
+
+  .nav-donate {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .btn-donate {
+    width: calc(100% - 40px);
+    margin: 10px 20px;
+  }
+
+  .profile-wrapper {
+    position: static;
+  }
+
+  .profile-dropdown {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    border-radius: 0;
+    min-width: unset;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+  }
+
+  .profile-dropdown.open {
+    max-height: 400px;
+    overflow: visible;
+  }
+
+  .profile-dropdown::before {
+    display: none;
+  }
+}

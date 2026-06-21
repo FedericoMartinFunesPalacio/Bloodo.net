@@ -1,0 +1,68 @@
+<div class="donor-list-container">
+  <div class="donor-list-header">
+    <h1>Donadores Registrados</h1>
+    <button class="btn-primary btn-create" routerLink="/donors/new">
+      <span class="mat-icon">person_add</span> Nuevo Donador
+    </button>
+  </div>
+
+  @if (loading) {
+    <div class="loading">Cargando donadores...</div>
+  } @else if (donors.length === 0) {
+    <div class="empty-state">
+      <p>No hay donadores registrados</p>
+    </div>
+  } @else {
+    <div class="table-container">
+      <table class="donor-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Documento</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Tipo Sangre</th>
+            <th>Género</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (donor of donors; track donor.id) {
+            <tr>
+              <td class="cell-name">{{ donor.firstName }} {{ donor.lastName }}</td>
+              <td>{{ donor.document }}</td>
+              <td>{{ donor.email }}</td>
+              <td>{{ donor.phoneNumber }}</td>
+              <td>
+                <span class="blood-tag">
+                  {{ donor.bloodGroup | enumLabel }} {{ donor.bloodFactor | enumLabel }}
+                </span>
+              </td>
+              <td>{{ donor.gender | enumLabel }}</td>
+              <td>
+                <span class="status" [class.active]="donor.isActive" [class.inactive]="!donor.isActive">
+                  @if (donor.isActive) { Activo } @else { Inactivo }
+                </span>
+              </td>
+              <td class="cell-actions">
+                @if (isAdmin) {
+                  <button class="btn-icon btn-edit" (click)="editDonor(donor.id)" title="Editar">
+                    <span class="mat-icon">edit</span>
+                  </button>
+                  <button class="btn-icon btn-delete" (click)="deleteDonor(donor.id)" title="Eliminar">
+                    <span class="mat-icon">delete</span>
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-footer">
+      <span>Total: {{ donors.length }} donador(es)</span>
+    </div>
+  }
+</div>

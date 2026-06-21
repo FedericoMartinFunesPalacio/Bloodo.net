@@ -1,5 +1,9 @@
 package com.FedericoFunes.app_service.controllers;
 
+import com.FedericoFunes.app_service.dtos.campaigns.BloodTypeRankingDTO;
+import com.FedericoFunes.app_service.dtos.donor.BloodTypePercentageDTO;
+import com.FedericoFunes.app_service.dtos.donor.DonorHealthDTO;
+import com.FedericoFunes.app_service.dtos.donor.DonorStatsDTO;
 import com.FedericoFunes.app_service.dtos.donor.RequestDonorDTO;
 import com.FedericoFunes.app_service.dtos.donor.ResponseDonorDTO;
 import com.FedericoFunes.app_service.services.DonorService;
@@ -18,6 +22,22 @@ import java.util.List;
 @RequestMapping("/api/v1/donors")
 public class DonorController {
     private final DonorService donorService;
+
+    @Operation(summary = "Ranking global de tipos de sangre", description = "Devuelve el conteo de donadores por tipo de sangre (grupo + factor) en toda la aplicación, ordenado de mayor a menor.")
+    @ApiResponse(responseCode = "200", description = "Ranking obtenido correctamente.")
+    @PreAuthorize("hasAnyRole('ADMIN','DONOR', 'ORGANIZER')")
+    @GetMapping("/metrics/blood-type-ranking")
+    public ResponseEntity<List<BloodTypeRankingDTO>> GetBloodTypeRanking() {
+        return ResponseEntity.ok(donorService.GetBloodTypeRanking());
+    }
+
+    @Operation(summary = "Porcentaje de tipos de sangre", description = "Devuelve el porcentaje de donadores por tipo de sangre respecto al total de donadores activos.")
+    @ApiResponse(responseCode = "200", description = "Porcentajes obtenidos correctamente.")
+    @PreAuthorize("hasAnyRole('ADMIN','DONOR')")
+    @GetMapping("/metrics/blood-type-percentage")
+    public ResponseEntity<List<BloodTypePercentageDTO>> GetBloodTypePercentage() {
+        return ResponseEntity.ok(donorService.GetBloodTypePercentage());
+    }
 
     @Operation(summary = "Obtener todos los donantes",
             description = "Devuelve una lista con todos los donantes registrados en el sistema.")
@@ -40,8 +60,7 @@ public class DonorController {
     @Operation(summary = "Crear un nuevo donante",
             description = "Registra un nuevo donante en el sistema a partir de los datos proporcionados.")
     @ApiResponse(responseCode = "200", description = "Donante creado exitosamente.")
-    @PreAuthorize("hasAnyRole('ADMIN','DONOR')")
-    @PostMapping("/")
+    @PostMapping("/auth")
     public ResponseEntity<ResponseDonorDTO> CreateDonor(@RequestBody RequestDonorDTO donor) {
         return ResponseEntity.ok(donorService.CreateDonor(donor));
     }
@@ -62,5 +81,23 @@ public class DonorController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDonorDTO> DeleteDonor(@PathVariable Long id) {
         return ResponseEntity.ok(donorService.DeleteDonor(id));
+    }
+
+    @Operation(summary = "Métricas de donaciones del donador",
+            description = "Devuelve estadísticas de donaciones: campañas asistidas, sangre estimada donada.")
+    @ApiResponse(responseCode = "200", description = "Métricas obtenidas correctamente.")
+    @PreAuthorize("hasAnyRole('ADMIN','DONOR')")
+    @GetMapping("/{id}/metrics/stats")
+    public ResponseEntity<DonorStatsDTO> GetDonorStats(@PathVariable Long id) {
+        return ResponseEntity.ok(donorService.GetDonorStats(id));
+    }
+
+    @Operation(summary = "Información de salud del donador",
+            description = "Devuelve información de salud: tipo de sangre, IMC, edad, última donación, próxima fecha elegible.")
+    @ApiResponse(responseCode = "200", description = "Información de salud obtenida correctamente.")
+    @PreAuthorize("hasAnyRole('ADMIN','DONOR')")
+    @GetMapping("/{id}/metrics/health")
+    public ResponseEntity<DonorHealthDTO> GetDonorHealth(@PathVariable Long id) {
+        return ResponseEntity.ok(donorService.GetDonorHealth(id));
     }
 }

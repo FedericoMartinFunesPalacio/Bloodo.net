@@ -1,0 +1,76 @@
+<div class="my-donations-page">
+  <div class="page-header">
+    <h1><span class="mat-icon">bloodtype</span> Mis Donaciones</h1>
+    <p class="subtitle">Seguimiento de tus donaciones e información de salud</p>
+  </div>
+
+  @if (loading) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Cargando datos...</p>
+    </div>
+  } @else if (error) {
+    <div class="error-container">
+      <p>Error al cargar los datos. Intentá nuevamente.</p>
+    </div>
+  } @else {
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon"><span class="mat-icon">emoji_events</span></div>
+        <div class="stat-value">{{ stats?.campaignsAttended || 0 }}</div>
+        <div class="stat-label">Campañas asistidas</div>
+        <div class="stat-subtitle">Veces que donaste sangre</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><span class="mat-icon">vaccination</span></div>
+        <div class="stat-value">{{ stats?.estimatedMl || 0 }} ml</div>
+        <div class="stat-label">Sangre donada (estimado)</div>
+        <div class="stat-subtitle">{{ stats?.estimatedLiters || 0 }} litros en total</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><span class="mat-icon">favorite</span></div>
+        <div class="stat-value">{{ (stats?.campaignsAttended || 0) * 3 }}</div>
+        <div class="stat-label">Vidas salvadas (estimado)</div>
+        <div class="stat-subtitle">3 vidas por cada donación</div>
+      </div>
+    </div>
+
+    @if (health) {
+      <div class="health-section">
+        <h2>Información de Salud</h2>
+        <div class="health-grid">
+          <div class="health-card">
+            <div class="health-icon"><span class="mat-icon">bloodtype</span></div>
+            <div class="health-label">Tipo de sangre</div>
+            <div class="health-value blood-type">{{ health.bloodType | enumLabel }}</div>
+          </div>
+          <div class="health-card">
+            <div class="health-icon"><span class="mat-icon">calendar_today</span></div>
+            <div class="health-label">Edad</div>
+            <div class="health-value">{{ health.age }} años</div>
+          </div>
+          <div class="health-card">
+            <div class="health-icon"><span class="mat-icon">monitor_weight</span></div>
+            <div class="health-label">IMC</div>
+            <div class="health-value" [style.color]="getBmiColor(health.bmi)">
+              {{ health.bmi | number:'1.1-1' }}
+              <span class="bmi-tag" [style.background]="getBmiColor(health.bmi)">{{ getBmiCategory(health.bmi) }}</span>
+            </div>
+          </div>
+          <div class="health-card">
+            <div class="health-icon"><span class="mat-icon">schedule</span></div>
+            <div class="health-label">Última donación</div>
+            <div class="health-value">{{ health.lastDonationDate || 'Sin registros' }}</div>
+          </div>
+          <div class="health-card">
+            <div class="health-icon"><span class="mat-icon">alarm</span></div>
+            <div class="health-label">Próxima fecha elegible</div>
+            <div class="health-value" [class.pending]="!health.nextEligibleDate">
+              {{ health.nextEligibleDate || 'Sin donaciones previas' }}
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>

@@ -20,6 +20,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class ResponseDonorDTO {
+    @NotBlank
+    @NotNull
+    private Long id;
+
     @JsonProperty("first_name")
     @NotBlank
     @NotNull

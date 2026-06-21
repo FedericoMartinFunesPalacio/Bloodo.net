@@ -40,8 +40,7 @@ public class OrganizerEmpController {
     @Operation(summary = "Crear un nuevo organizador empresarial",
             description = "Registra un nuevo organizador empresarial en el sistema a partir de los datos proporcionados.")
     @ApiResponse(responseCode = "200", description = "Organizador empresarial creado exitosamente.")
-    @PreAuthorize("hasAnyRole('ADMIN','ORGANIZER')")
-    @PostMapping("/")
+    @PostMapping("/auth")
     public ResponseEntity<ResponseOrganizerEmpDTO> CreateOrganizerEmp(@RequestBody RequestOrganizerEmpDTO organizerEmp) {
         return ResponseEntity.ok(organizerEmpService.CreateOrganizerEmp(organizerEmp));
     }
