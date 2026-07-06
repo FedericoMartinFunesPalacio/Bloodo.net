@@ -2,9 +2,9 @@
   @for (toast of toasts; track toast.id) {
     <div class="toast" [class]="'toast-' + toast.type" [style.animation-duration]="toast.duration + 'ms'">
       <div class="toast-progress" [style.animation-duration]="toast.duration + 'ms'"></div>
-      <span class="toast-icon"><span class="mat-icon">{{ getIcon(toast.type) }}</span></span>
+      <span class="toast-icon"><mat-icon>{{ getIcon(toast.type) }}</mat-icon></span>
       <span class="toast-message">{{ toast.message }}</span>
-      <button class="toast-close" (click)="dismiss(toast.id)"><span class="mat-icon">close</span></button>
+      <button class="toast-close" (click)="dismiss(toast.id)"><mat-icon>close</mat-icon></button>
     </div>
   }
 </div>

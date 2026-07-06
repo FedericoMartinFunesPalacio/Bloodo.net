@@ -148,10 +148,10 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }).subscribe({
       next: ({ campaigns, finishedCampaigns, donors, empOrgs, perOrgs }) => {
         this.stats = [
-          { label: 'Campañas Activas', value: campaigns.length, icon: '📋' },
-          { label: 'Campañas Finalizadas', value: finishedCampaigns.length, icon: '✅' },
-          { label: 'Donadores', value: donors.length, icon: '🩸' },
-          { label: 'Organizadores', value: empOrgs.length + perOrgs.length, icon: '🏢' }
+          { label: 'Campañas Activas', value: campaigns.length, icon: 'list_alt' },
+          { label: 'Campañas Finalizadas', value: finishedCampaigns.length, icon: 'check_circle' },
+          { label: 'Donadores', value: donors.length, icon: 'bloodtype' },
+          { label: 'Organizadores', value: empOrgs.length + perOrgs.length, icon: 'business' }
         ];
         this.recentCampaigns = campaigns.slice(0, 5);
         this.loading = false;
@@ -177,9 +177,9 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
           const myFinished = finishedCampaigns.filter(c => c.organizerId === orgId);
 
           this.stats = [
-            { label: 'Mis Campañas Activas', value: myActive.length, icon: '📋' },
-            { label: 'Mis Campañas Finalizadas', value: myFinished.length, icon: '✅' },
-            { label: 'Total Campañas', value: myActive.length + myFinished.length, icon: '📊' }
+            { label: 'Mis Campañas Activas', value: myActive.length, icon: 'list_alt' },
+            { label: 'Mis Campañas Finalizadas', value: myFinished.length, icon: 'check_circle' },
+            { label: 'Total Campañas', value: myActive.length + myFinished.length, icon: 'bar_chart' }
           ];
           this.recentCampaigns = myActive.slice(0, 5);
           this.loading = false;
@@ -197,8 +197,8 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.campaignService.getAllCampaigns().subscribe({
       next: (campaigns) => {
         this.stats = [
-          { label: 'Campañas Disponibles', value: campaigns.length, icon: '📋' },
-          { label: 'Campañas Próximas', value: campaigns.filter(c => c.startDate).length, icon: '📅' }
+          { label: 'Campañas Disponibles', value: campaigns.length, icon: 'list_alt' },
+          { label: 'Campañas Próximas', value: campaigns.filter(c => c.startDate).length, icon: 'event' }
         ];
         this.recentCampaigns = campaigns.slice(0, 5);
         this.loading = false;

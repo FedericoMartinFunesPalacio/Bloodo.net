@@ -10,11 +10,13 @@ public class DotenvConfig {
     @Bean
     public Dotenv dotenv() {
         Dotenv dotenv = Dotenv.configure()
-                .directory("C:/Users/funes/Desktop/Bloodo.net/backend/app-service")
+                .ignoreIfMissing()
                 .load();
-        dotenv.entries().forEach(entry ->
-                System.setProperty(entry.getKey(), entry.getValue())
-        );
+        if (dotenv != null) {
+            dotenv.entries().forEach(entry ->
+                    System.setProperty(entry.getKey(), entry.getValue())
+            );
+        }
         return dotenv;
     }
 }

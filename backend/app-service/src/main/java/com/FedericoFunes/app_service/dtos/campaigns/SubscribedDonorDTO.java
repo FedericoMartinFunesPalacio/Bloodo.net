@@ -24,6 +24,9 @@ public class SubscribedDonorDTO {
 
     private String document;
 
+    @JsonProperty("phone_number")
+    private String phoneNumber;
+
     @JsonProperty("blood_group")
     private BloodGroup bloodGroup;
 

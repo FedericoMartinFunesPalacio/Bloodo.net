@@ -2,11 +2,13 @@ package com.FedericoFunes.app_service.services.impl;
 
 import com.FedericoFunes.app_service.dtos.campaigns.BloodEstimatedDTO;
 import com.FedericoFunes.app_service.dtos.campaigns.BloodTypeRankingDTO;
+import com.FedericoFunes.app_service.dtos.campaigns.GeographicDistributionDTO;
 import com.FedericoFunes.app_service.dtos.campaigns.LivesSavedDTO;
 import com.FedericoFunes.app_service.dtos.campaigns.RequestCampaignsDTO;
 import com.FedericoFunes.app_service.dtos.campaigns.ResponseCampaignsDTO;
 import com.FedericoFunes.app_service.dtos.campaigns.TotalBloodEstimatedDTO;
 import com.FedericoFunes.app_service.dtos.campaigns.TotalLivesSavedDTO;
+import com.FedericoFunes.app_service.dtos.donor.BloodTypePercentageDTO;
 import com.FedericoFunes.app_service.entities.CampaignsEntity;
 import com.FedericoFunes.app_service.entities.Organizer;
 import com.FedericoFunes.app_service.handlers.BadRequestException;
@@ -114,33 +116,6 @@ public class CampaignsServiceImpl implements CampaignsService {
         entity.setIsActive(dto.getIsActive());
         return entity;
     }
-    private OrganizerEmpEntity mapOrganizerEmpDTOToEntity(ResponseOrganizerEmpDTO dto) {
-        OrganizerEmpEntity entity = new OrganizerEmpEntity();
-        entity.setFullName(dto.getFullName());
-        entity.setDocument(dto.getDocument());
-        entity.setDirection(dto.getDirection());
-        entity.setLatitude(dto.getLatitude());
-        entity.setLongitude(dto.getLongitude());
-        entity.setEmail(dto.getEmail());
-        entity.setPhoneNumber(dto.getPhoneNumber());
-        entity.setIsActive(dto.getIsActive());
-        return entity;
-    }
-    private OrganizerPerEntity mapOrganizerPerDTOToEntity(ResponseOrganizerPerDTO dto) {
-        OrganizerPerEntity entity = new OrganizerPerEntity();
-        entity.setFirstName(dto.getFirstName());
-        entity.setLastName(dto.getLastName());
-        entity.setBirthdate(dto.getBirthdate());
-        entity.setDocument(dto.getDocument());
-        entity.setDirection(dto.getDirection());
-        entity.setLatitude(dto.getLatitude());
-        entity.setLongitude(dto.getLongitude());
-        entity.setGender(dto.getGender());
-        entity.setEmail(dto.getEmail());
-        entity.setPhoneNumber(dto.getPhoneNumber());
-        entity.setIsActive(dto.getIsActive());
-        return entity;
-    }
     private void validateCampaign(RequestCampaignsDTO dto) {
         if (dto == null || dto.getTitle() == null || dto.getTitle().isBlank() || dto.getDescription() == null || dto.getDescription().isBlank() || dto.getStartDate() == null || dto.getStartTime() == null || dto.getDirection() == null || dto.getDirection().isBlank() || dto.getOrganizerId() == null) {
             throw new BadRequestException("Validation failed: fields empty or null");
@@ -191,6 +166,7 @@ public class CampaignsServiceImpl implements CampaignsService {
             dto.setLastName(donor.getLastName());
             dto.setEmail(donor.getEmail());
             dto.setDocument(donor.getDocument());
+            dto.setPhoneNumber(donor.getPhoneNumber());
             dto.setBloodGroup(donor.getBloodGroup());
             dto.setBloodFactor(donor.getBloodFactor());
             dto.setIsActive(donor.getIsActive());
@@ -492,7 +468,88 @@ public class CampaignsServiceImpl implements CampaignsService {
     @Override
     public List<ResponseCampaignsDTO> getCampaignsByOrganizer(Long organizerId) {
         List<ResponseCampaignsDTO> result = new ArrayList<>();
-        for (CampaignsEntity entity : campaignsRepository.findByCreatorIdAndIsActiveTrueAndEndDateIsNull(organizerId)) {
+        for (CampaignsEntity entity : campaignsRepository.findByCreatorId(organizerId)) {
+            result.add(entityToDTO(entity));
+        }
+        return result;
+    }
+
+    @Override
+    public TotalBloodEstimatedDTO getTotalBloodByOrganizer(Long organizerId) {
+        Long totalSubscribers = campaignsRepository.countTotalSubscribersInFinishedCampaignsByOrganizer(organizerId);
+        Long totalFinished = campaignsRepository.countFinishedCampaignsByOrganizer(organizerId);
+        double estimatedMl = totalSubscribers * 450.0;
+        double estimatedLiters = estimatedMl / 1000.0;
+        return new TotalBloodEstimatedDTO(totalSubscribers, totalFinished, estimatedMl, estimatedLiters);
+    }
+
+    @Override
+    public List<BloodTypePercentageDTO> getBloodTypePercentageByOrganizer(Long organizerId) {
+        Long totalSubscribers = campaignsRepository.countTotalSubscribersInFinishedCampaignsByOrganizer(organizerId);
+        List<Object[]> results = campaignsRepository.countBloodTypesInFinishedCampaignsByOrganizer(organizerId);
+        List<BloodTypePercentageDTO> dtos = new ArrayList<>();
+        for (Object[] row : results) {
+            String bloodGroup = row[0] != null ? row[0].toString() : "Sin grupo";
+            String bloodFactor = row[1] != null ? row[1].toString() : "Sin factor";
+            String bloodType = bloodGroup + "_" + bloodFactor;
+            Long count = (Long) row[2];
+            double percentage = totalSubscribers > 0 ? (count * 100.0 / totalSubscribers) : 0.0;
+            dtos.add(new BloodTypePercentageDTO(bloodType, count, Math.round(percentage * 100.0) / 100.0));
+        }
+        return dtos;
+    }
+
+    @Override
+    public Long getCampaignCountByOrganizer(Long organizerId) {
+        return campaignsRepository.countTotalCampaignsByOrganizer(organizerId);
+    }
+
+    @Override
+    public Long getFinishedCampaignCountByOrganizer(Long organizerId) {
+        return campaignsRepository.countFinishedCampaignsByOrganizer(organizerId);
+    }
+
+    @Override
+    public Long getTotalDonorsByOrganizer(Long organizerId) {
+        return campaignsRepository.countTotalSubscribersInFinishedCampaignsByOrganizer(organizerId);
+    }
+
+    @Override
+    public Double getAverageDonorsPerCampaign(Long organizerId) {
+        Long totalSubscribers = campaignsRepository.countTotalSubscribersInFinishedCampaignsByOrganizer(organizerId);
+        Long totalFinished = campaignsRepository.countFinishedCampaignsByOrganizer(organizerId);
+        return totalFinished > 0 ? (double) totalSubscribers / totalFinished : 0.0;
+    }
+
+    @Override
+    public TotalLivesSavedDTO getLivesSavedByOrganizer(Long organizerId) {
+        Long totalSubscribers = campaignsRepository.countTotalSubscribersInFinishedCampaignsByOrganizer(organizerId);
+        Long totalFinished = campaignsRepository.countFinishedCampaignsByOrganizer(organizerId);
+        return new TotalLivesSavedDTO(totalSubscribers, totalFinished, totalSubscribers * 3);
+    }
+
+    @Override
+    public List<GeographicDistributionDTO> getGeographicDistributionByOrganizer(Long organizerId) {
+        List<Object[]> results = campaignsRepository.findCampaignLocationsByOrganizer(organizerId);
+        List<GeographicDistributionDTO> dtos = new ArrayList<>();
+        for (Object[] row : results) {
+            dtos.add(new GeographicDistributionDTO(
+                    (Long) row[4],
+                    (String) row[3],
+                    (String) row[0],
+                    (Double) row[1],
+                    (Double) row[2],
+                    (Boolean) row[5],
+                    row[6] != null
+            ));
+        }
+        return dtos;
+    }
+
+    @Override
+    public List<ResponseCampaignsDTO> getActiveSubscribedCampaigns(Long donorId) {
+        List<ResponseCampaignsDTO> result = new ArrayList<>();
+        for (CampaignsEntity entity : campaignsRepository.findActiveSubscribedCampaignsByDonor(donorId)) {
             result.add(entityToDTO(entity));
         }
         return result;

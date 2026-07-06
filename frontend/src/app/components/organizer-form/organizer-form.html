@@ -8,12 +8,12 @@
       <h2>¿Qué tipo de organizador querés registrar?</h2>
       <div class="type-cards">
         <div class="type-card" (click)="selectType('emp')">
-          <div class="type-icon"><span class="mat-icon">business</span></div>
+          <div class="type-icon"><mat-icon>business</mat-icon></div>
           <h3>Empresa / Organización</h3>
           <p>Registrar como entidad empresarial u organización</p>
         </div>
         <div class="type-card" (click)="selectType('per')">
-          <div class="type-icon"><span class="mat-icon">person</span></div>
+          <div class="type-icon"><mat-icon>person</mat-icon></div>
           <h3>Persona</h3>
           <p>Registrar como organizador individual</p>
         </div>
@@ -23,9 +23,9 @@
     @if (!isEditMode) {
       <div class="type-badge">
         @if (organizerType === 'emp') {
-          <span><span class="mat-icon">business</span> Empresa / Organización</span>
+          <span><mat-icon>business</mat-icon> Empresa / Organización</span>
         } @else {
-          <span><span class="mat-icon">person</span> Persona</span>
+          <span><mat-icon>person</mat-icon> Persona</span>
         }
         <button class="btn-change-type" (click)="organizerType = null">Cambiar</button>
       </div>

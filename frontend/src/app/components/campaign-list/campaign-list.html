@@ -1,5 +1,5 @@
 <div class="campaign-list-container">
-  <div class="campaign-list-header">
+  <div class="campaign-list-header" id="tour-campaign-list-header">
     <h1>Campañas de Donación</h1>
   </div>
 
@@ -10,9 +10,22 @@
       <p>No hay campañas disponibles en este momento</p>
     </div>
   } @else {
-    <div class="campaigns-grid">
-      @for (campaign of campaigns; track campaign.id) {
-        <div class="campaign-card">
+    <div class="search-bar" id="tour-campaign-list-search">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        placeholder="Buscar campaña por título..."
+        class="search-input"
+      />
+      @if (searchTerm) {
+        <button class="search-clear" (click)="searchTerm = ''">✕</button>
+      }
+    </div>
+
+    <div class="campaigns-grid" id="tour-campaign-list-cards">
+      @for (campaign of filteredCampaigns; track $index) {
+        <div class="campaign-card" [class.search-highlight]="isSearchResult($index)">
           <div class="campaign-header">
             <h2>{{ campaign.title }}</h2>
           </div>

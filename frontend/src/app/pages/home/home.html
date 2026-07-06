@@ -10,8 +10,8 @@
 
   @if (bloodTotal) {
     <section class="hero-metrics">
-      <div class="hero-card blood">
-        <span class="hero-icon"><span class="mat-icon">bloodtype</span></span>
+      <div class="hero-card blood" id="tour-hero-blood">
+        <span class="hero-icon"><mat-icon>bloodtype</mat-icon></span>
         <div class="hero-content">
           <span class="hero-value">{{ bloodTotal.estimatedLiters }} LTs</span>
           <span class="hero-label">de sangre ayudamos a recolectar</span>
@@ -27,8 +27,8 @@
 
   @if (livesTotal) {
     <section class="hero-metrics">
-      <div class="hero-card lives">
-        <span class="hero-icon"><span class="mat-icon">favorite</span></span>
+      <div class="hero-card lives" id="tour-hero-lives">
+        <span class="hero-icon"><mat-icon>favorite</mat-icon></span>
         <div class="hero-content">
           <span class="hero-value">{{ livesTotal.estimatedLivesSaved }}</span>
           <span class="hero-label">vidas logramos salvar</span>
@@ -40,11 +40,11 @@
   @if (loading) {
     <div class="loading">Cargando dashboard...</div>
   } @else {
-    <section class="stats-section">
+    <section class="stats-section" id="tour-stats">
       <div class="stats-grid">
         @for (stat of stats; track stat.label) {
           <div class="stat-card">
-            <span class="stat-icon">{{ stat.icon }}</span>
+            <span class="stat-icon"><mat-icon>{{ stat.icon }}</mat-icon></span>
             <span class="stat-value">{{ stat.value }}</span>
             <span class="stat-label">{{ stat.label }}</span>
           </div>
@@ -54,7 +54,7 @@
 
     <section class="content-section">
       <div class="content-grid">
-        <div class="recent-campaigns">
+        <div class="recent-campaigns" id="tour-recent-campaigns">
           <h2>
             @if (isAdmin) { Campañas Recientes }
             @else if (isOrganizer) { Mis Campañas Activas }
@@ -80,46 +80,46 @@
           }
         </div>
 
-        <div class="quick-actions">
+        <div class="quick-actions" id="tour-quick-actions">
           <h2>Acciones Rápidas</h2>
           <div class="actions-grid">
             @if (isAdmin) {
               <a routerLink="/campaigns" class="action-card">
-                <span class="action-icon"><span class="mat-icon">list_alt</span></span>
+                <span class="action-icon"><mat-icon>list_alt</mat-icon></span>
                 <span class="action-label">Ver Campañas</span>
               </a>
               <a routerLink="/donors" class="action-card">
-                <span class="action-icon"><span class="mat-icon">bloodtype</span></span>
+                <span class="action-icon"><mat-icon>bloodtype</mat-icon></span>
                 <span class="action-label">Ver Donadores</span>
               </a>
               <a routerLink="/organizers" class="action-card">
-                <span class="action-icon"><span class="mat-icon">business</span></span>
+                <span class="action-icon"><mat-icon>business</mat-icon></span>
                 <span class="action-label">Ver Organizadores</span>
               </a>
               <a routerLink="/campaigns/new" class="action-card highlight">
-                <span class="action-icon"><span class="mat-icon">add</span></span>
+                <span class="action-icon"><mat-icon>add</mat-icon></span>
                 <span class="action-label">Nueva Campaña</span>
               </a>
             }
 
             @if (isOrganizer) {
               <a routerLink="/campaigns" class="action-card">
-                <span class="action-icon"><span class="mat-icon">list_alt</span></span>
+                <span class="action-icon"><mat-icon>list_alt</mat-icon></span>
                 <span class="action-label">Ver Campañas</span>
               </a>
               <a routerLink="/campaigns/new" class="action-card highlight">
-                <span class="action-icon"><span class="mat-icon">add</span></span>
+                <span class="action-icon"><mat-icon>add</mat-icon></span>
                 <span class="action-label">Nueva Campaña</span>
               </a>
             }
 
             @if (isDonor) {
               <a routerLink="/campaigns" class="action-card highlight">
-                <span class="action-icon"><span class="mat-icon">list_alt</span></span>
+                <span class="action-icon"><mat-icon>list_alt</mat-icon></span>
                 <span class="action-label">Explorar Campañas</span>
               </a>
               <a routerLink="/donors/new" class="action-card">
-                <span class="action-icon"><span class="mat-icon">edit</span></span>
+                <span class="action-icon"><mat-icon>edit</mat-icon></span>
                 <span class="action-label">Editar Mi Perfil</span>
               </a>
             }

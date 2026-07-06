@@ -13,14 +13,46 @@ import { animate, stagger } from 'animejs';
 })
 export class LandingComponent implements AfterViewInit, OnDestroy {
   private observers: IntersectionObserver[] = [];
+  private carouselInterval: any = null;
+  private currentSlide = 0;
+  private totalSlides = 4;
 
   ngAfterViewInit(): void {
     this.animateHero();
     this.animateScrollSections();
+    this.startCarousel();
   }
 
   ngOnDestroy(): void {
     this.observers.forEach((o) => o.disconnect());
+    if (this.carouselInterval) {
+      clearInterval(this.carouselInterval);
+    }
+  }
+
+  private startCarousel(): void {
+    const slides = document.querySelectorAll('.hero-slide') as NodeListOf<HTMLElement>;
+    if (!slides.length) return;
+
+    animate(slides[0], { opacity: [0, 1], duration: 1, ease: 'outQuad' });
+
+    this.carouselInterval = setInterval(() => {
+      const current = slides[this.currentSlide];
+      this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+      const next = slides[this.currentSlide];
+
+      animate(current, {
+        opacity: [1, 0],
+        duration: 1000,
+        ease: 'inOutQuad'
+      });
+
+      animate(next, {
+        opacity: [0, 1],
+        duration: 1000,
+        ease: 'inOutQuad'
+      });
+    }, 4000);
   }
 
   private animateHero(): void {

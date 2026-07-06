@@ -2,27 +2,27 @@
   <div class="navbar-container">
     <div class="navbar-brand">
       @if (currentUser) {
-        <a routerLink="/home" class="brand-logo"><span class="mat-icon">bloodtype</span> Bloodo.net</a>
+        <a routerLink="/home" class="brand-logo"><mat-icon>bloodtype</mat-icon> Bloodo.net</a>
       } @else {
-        <a routerLink="/" class="brand-logo"><span class="mat-icon">bloodtype</span> Bloodo.net</a>
+        <a routerLink="/" class="brand-logo"><mat-icon>bloodtype</mat-icon> Bloodo.net</a>
       }
     </div>
 
     <button class="menu-toggle" (click)="toggleMenu()">
-      @if (menuOpen) { <span class="mat-icon">close</span> } @else { <span class="mat-icon">menu</span> }
+      @if (menuOpen) { <mat-icon>close</mat-icon> } @else { <mat-icon>menu</mat-icon> }
     </button>
 
     <ul class="nav-menu" [class.active]="menuOpen">
       @if (currentUser) {
         <li class="nav-item">
-          <a routerLink="/campaigns" (click)="closeMenu()" routerLinkActive="active">
+          <a id="tour-campanas" routerLink="/campaigns" (click)="closeMenu()" routerLinkActive="active">
             Campañas
           </a>
         </li>
 
         @if (isOrganizer || isAdmin) {
           <li class="nav-item">
-            <a routerLink="/my-campaigns" (click)="closeMenu()" routerLinkActive="active">
+            <a id="tour-mis-campanas" routerLink="/my-campaigns" (click)="closeMenu()" routerLinkActive="active">
               Mis Campañas
             </a>
           </li>
@@ -30,13 +30,13 @@
 
         @if (isDonor) {
           <li class="nav-item">
-            <a routerLink="/my-donations" (click)="closeMenu()" routerLinkActive="active">
+            <a id="tour-mis-donaciones" routerLink="/my-donations" (click)="closeMenu()" routerLinkActive="active">
               Mis Donaciones
             </a>
           </li>
         }
 
-        @if (isAdmin) {
+        @if (isAdmin && false) {
           <li class="nav-item">
             <a routerLink="/donors/new" (click)="closeMenu()" routerLinkActive="active">
               Registrar Donador
@@ -52,7 +52,7 @@
           </li>
         }
 
-        @if (isAdmin) {
+        @if (isAdmin && false) {
           <li class="nav-item">
             <a routerLink="/organizers/new" (click)="closeMenu()" routerLinkActive="active">
               Registrar Organizador
@@ -78,17 +78,21 @@
 
         <li class="nav-item nav-donate">
           <app-donate-modal #donateModal></app-donate-modal>
-          <button class="btn-donate" (click)="donateModal.open(); closeMenu()">
-            <span class="mat-icon">favorite</span> Donar
+          <button id="tour-donar" class="btn-donate" (click)="donateModal.open(); closeMenu()">
+            <mat-icon>favorite</mat-icon> Donar
           </button>
         </li>
       }
     </ul>
 
     @if (currentUser) {
-      <div class="profile-wrapper">
+      <div class="actions-wrapper">
+        <button class="btn-help" (click)="startTour()" title="Ayuda">
+          <mat-icon>help_outline</mat-icon>
+        </button>
+        <div class="profile-wrapper">
         <button class="btn-profile" (click)="toggleProfile()">
-          <span class="mat-icon">person</span>
+          <mat-icon>person</mat-icon>
         </button>
 
         @if (profileOpen) {
@@ -101,26 +105,27 @@
             </div>
             <div class="profile-details">
               <div class="profile-detail">
-                <span class="mat-icon">email</span>
+                <mat-icon>email</mat-icon>
                 <span>{{ currentUser.email }}</span>
               </div>
               <div class="profile-detail">
-                <span class="mat-icon">phone</span>
+                <mat-icon>phone</mat-icon>
                 <span>{{ currentUser.phone }}</span>
               </div>
             </div>
             <div class="profile-actions">
               @if (editProfileUrl) {
                 <a [routerLink]="editProfileUrl" class="profile-action" (click)="closeProfile()" title="Editar Perfil">
-                  <span class="mat-icon">edit</span>
+                  <mat-icon>edit</mat-icon>
                 </a>
               }
               <button class="profile-action" (click)="logout()" title="Cerrar Sesión">
-                <span class="mat-icon">logout</span>
+                <mat-icon>logout</mat-icon>
               </button>
             </div>
           </div>
         }
+      </div>
       </div>
     }
   </div>

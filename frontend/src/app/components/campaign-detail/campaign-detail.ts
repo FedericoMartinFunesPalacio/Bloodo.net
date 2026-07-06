@@ -11,6 +11,7 @@ import { SubscribedDonor } from '../../models/donor';
 import { AuthService } from '../../services/auth.service';
 import { CampaignBloodEstimated, CampaignLivesSaved, BloodTypeRanking } from '../../models/metrics';
 import { MatIcon } from '@angular/material/icon';
+import {DonorService} from '../../services/donor.service';
 declare var google: any;
 
 @Component({
@@ -39,6 +40,7 @@ export class CampaignDetailComponent implements OnInit {
     private campaignService: CampaignService,
     private roleService: RoleService,
     private authService: AuthService,
+    private donorService: DonorService,
     private route: ActivatedRoute,
     private router: Router,
     private toast: ToastService,
@@ -99,9 +101,7 @@ export class CampaignDetailComponent implements OnInit {
     this.campaignService.getSubscribedDonors(campaignId).subscribe({
       next: (donors) => {
         this.subscribedDonors = donors;
-        if (this.isDonor) {
-          this.checkIfSubscribed();
-        }
+        this.checkIfSubscribed();
       },
       error: (err) => {
         console.error('Error loading subscribed donors:', err);
@@ -158,37 +158,65 @@ export class CampaignDetailComponent implements OnInit {
     });
   }
 
+  suscribeEvent(campaingId: number, roleId: number): void {
+    this.campaignService.subscribeDonor(campaingId, roleId).subscribe({
+      next: () => {
+        this.isSubscribed = true;
+        this.toast.success('Te has suscrito a la campaña');
+        this.loadSubscribedDonors(this.campaign!.id!);
+        this.loadMetrics();
+      },
+      error: (err) => {
+        this.toast.error('Error al suscribirse a la campaña');
+        console.error('Error subscribing to campaign:', err);
+      }
+    });
+  }
+
   subscribeToCampaign(): void {
     if (!this.campaign?.id) {
       this.toast.error('No se puede suscribir a esta campaña');
       return;
     }
 
-    this.authService.getCurrentUser().subscribe({
-      next: (user) => {
-        if (!user) {
-          this.toast.error('No se pudo obtener la información del usuario');
-          return;
-        }
-
-        this.campaignService.subscribeDonor(this.campaign!.id!, user.roleId).subscribe({
-          next: () => {
-            this.isSubscribed = true;
-            this.toast.success('Te has suscrito a la campaña');
-            this.loadSubscribedDonors(this.campaign!.id!);
-            this.loadMetrics();
-          },
-          error: (err) => {
-            this.toast.error('Error al suscribirse a la campaña');
-            console.error('Error subscribing to campaign:', err);
+    if (this.campaign?.bloodFactorRequired && this.campaign?.bloodGroupRequired) {
+      this.authService.getCurrentUser().subscribe({
+        next: (user) => {
+          if (!user) {
+            this.toast.error('No se pudo obtener la información del usuario');
+            return;
           }
-        });
-      },
-      error: (err) => {
-        this.toast.error('Error al obtener información del usuario');
-        console.error('Error fetching current user:', err);
-      }
-    });
+
+          this.donorService.getDonorById(user.roleId).subscribe({
+            next: (donor) => {
+              if (donor.bloodFactor !== this.campaign!.bloodFactorRequired || donor.bloodGroup !== this.campaign!.bloodGroupRequired) {
+                this.toast.error('No cumples con los requisitos de sangre para suscribirte a esta campaña');
+                return;
+              }
+              this.suscribeEvent(this.campaign!.id!, user.roleId);
+            },
+            error: (err) => {
+              this.toast.error('Error al obtener información del donante');
+              console.error('Error fetching donor info:', err);
+            }
+          })
+        }
+      })
+    } else {
+      this.authService.getCurrentUser().subscribe({
+        next: (user) => {
+          if (!user) {
+            this.toast.error('No se pudo obtener la información del usuario');
+            return;
+          }
+          this.suscribeEvent(this.campaign!.id!, user.roleId);
+        },
+        error: (err) => {
+          this.toast.error('Error al obtener información del usuario');
+          console.error('Error fetching current user:', err);
+        }
+      });
+    }
   }
 
   unsubscribeFromCampaign(): void {

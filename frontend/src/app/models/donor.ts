@@ -34,6 +34,7 @@ export interface SubscribedDonor {
   lastName: string;
   email: string;
   document: string;
+  phoneNumber: string;
   bloodGroup: BloodGroup;
   bloodFactor: BloodFactor;
   isActive: boolean;

@@ -52,3 +52,13 @@ export interface DonorHealth {
   bmi: number;
   age: number;
 }
+
+export interface GeographicDistribution {
+  campaignId: number;
+  title: string;
+  direction: string;
+  latitude: number;
+  longitude: number;
+  isActive: boolean;
+  isFinished: boolean;
+}

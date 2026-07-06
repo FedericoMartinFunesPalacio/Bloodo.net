@@ -6,6 +6,7 @@ import { RequestCampaign, ResponseCampaign } from '../models/campaign';
 import { SubscribedDonor } from '../models/donor';
 import { AuthService } from './auth.service';
 import { mapCampaignToApi, mapCampaignFromApi, mapCampaignArrayFromApi, mapDonorArrayFromApi } from '../utils/dto-mapper';
+import { TotalBloodEstimated, TotalLivesSaved, BloodTypePercentage, GeographicDistribution } from '../models/metrics';
 
 @Injectable({
   providedIn: 'root',
@@ -97,5 +98,81 @@ export class CampaignService {
     const headers = this.authService.getAuthHeaders();
     return this.http.get<Record<string, any>[]>(`${this.baseUrl}/organizer/${organizerId}`, { headers })
       .pipe(map(data => mapCampaignArrayFromApi(data) as ResponseCampaign[]));
+  }
+
+  getActiveSubscribedCampaigns(donorId: number): Observable<ResponseCampaign[]> {
+    const headers = this.authService.getAuthHeaders();
+    return this.http.get<Record<string, any>[]>(`${this.baseUrl}/subscribed-by/${donorId}`, { headers })
+      .pipe(map(data => mapCampaignArrayFromApi(data) as ResponseCampaign[]));
+  }
+
+  unsubscribeFromCampaign(campaignId: number, donorId: number): Observable<any> {
+    const headers = this.authService.getAuthHeaders();
+    return this.http.delete(`${this.baseUrl}/${campaignId}/unsubscribe/${donorId}`, { headers });
+  }
+
+  getOrganizerBloodTotal(organizerId: number): Observable<TotalBloodEstimated> {
+    const headers = this.authService.getAuthHeaders();
+    return this.http.get<Record<string, any>>(`${this.baseUrl}/metrics/organizer/${organizerId}/blood-total`, { headers })
+      .pipe(map(data => ({
+        totalSubscribers: data['total_subscribers'],
+        totalCampaigns: data['total_campaigns'],
+        estimatedMl: data['estimated_ml'],
+        estimatedLiters: data['estimated_liters']
+      })));
+  }
+
+  getOrganizerBloodTypePercentage(organizerId: number): Observable<BloodTypePercentage[]> {
+    const headers = this.authService.getAuthHeaders();
+    return this.http.get<Record<string, any>[]>(`${this.baseUrl}/metrics/organizer/${organizerId}/blood-type-percentage`, { headers })
+      .pipe(map(data => data.map(item => ({
+        bloodType: item['blood_type'],
+        count: item['count'],
+        percentage: item['percentage']
+      }))));
+  }
+
+  getOrganizerCampaignCount(organizerId: number): Observable<number> {
+    const headers = this.authService.getAuthHeaders();
+    return this.http.get<number>(`${this.baseUrl}/metrics/organizer/${organizerId}/campaign-count`, { headers });
+  }
+
+  getOrganizerFinishedCount(organizerId: number): Observable<number> {
+    const headers = this.authService.getAuthHeaders();
+    return this.http.get<number>(`${this.baseUrl}/metrics/organizer/${organizerId}/finished-count`, { headers });
+  }
+
+  getOrganizerTotalDonors(organizerId: number): Observable<number> {
+    const headers = this.authService.getAuthHeaders();
+    return this.http.get<number>(`${this.baseUrl}/metrics/organizer/${organizerId}/total-donors`, { headers });
+  }
+
+  getOrganizerAverageDonors(organizerId: number): Observable<number> {
+    const headers = this.authService.getAuthHeaders();
+    return this.http.get<number>(`${this.baseUrl}/metrics/organizer/${organizerId}/average-donors`, { headers });
+  }
+
+  getOrganizerLivesSaved(organizerId: number): Observable<TotalLivesSaved> {
+    const headers = this.authService.getAuthHeaders();
+    return this.http.get<Record<string, any>>(`${this.baseUrl}/metrics/organizer/${organizerId}/lives-saved`, { headers })
+      .pipe(map(data => ({
+        totalSubscribers: data['total_subscribers'],
+        totalFinishedCampaigns: data['total_finished_campaigns'],
+        estimatedLivesSaved: data['estimated_lives_saved']
+      })));
+  }
+
+  getOrganizerGeographicDistribution(organizerId: number): Observable<GeographicDistribution[]> {
+    const headers = this.authService.getAuthHeaders();
+    return this.http.get<Record<string, any>[]>(`${this.baseUrl}/metrics/organizer/${organizerId}/geographic-distribution`, { headers })
+      .pipe(map(data => data.map(item => ({
+        campaignId: item['campaign_id'],
+        title: item['title'],
+        direction: item['direction'],
+        latitude: item['latitude'],
+        longitude: item['longitude'],
+        isActive: item['is_active'],
+        isFinished: item['is_finished']
+      }))));
   }
 }

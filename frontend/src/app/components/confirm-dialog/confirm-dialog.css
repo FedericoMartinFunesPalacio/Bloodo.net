@@ -8,25 +8,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10001;
+  z-index: var(--z-modal);
   animation: overlayFadeIn 0.2s ease;
 }
 
 .confirm-dialog {
-  background: white;
-  border-radius: 12px;
-  padding: 28px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-7);
   width: 90%;
   max-width: 400px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-lg);
   animation: dialogSlideIn 0.3s cubic-bezier(0.21, 1.02, 0.73, 1);
 }
 
 .confirm-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
 }
 
 .confirm-icon {
@@ -35,63 +35,64 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  background: #fff3cd;
-  color: #f39c12;
+  background: var(--color-warning-light);
+  color: var(--color-warning);
   border-radius: 50%;
-  font-size: 20px;
+  font-size: var(--font-size-xl);
   flex-shrink: 0;
 }
 
 .confirm-header h3 {
   margin: 0;
-  font-size: 18px;
-  color: #333;
-  font-weight: 600;
+  font-size: var(--font-size-lg);
+  color: var(--color-text);
+  font-weight: var(--font-weight-semibold);
 }
 
 .confirm-message {
-  color: #555;
-  font-size: 14px;
-  line-height: 1.5;
-  margin: 0 0 24px 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  margin: 0 0 var(--space-6);
 }
 
 .confirm-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: var(--space-3);
 }
 
 .btn-cancel,
 .btn-confirm {
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-base);
   border: none;
 }
 
 .btn-cancel {
-  background: white;
-  color: #555;
-  border: 1px solid #ddd;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
 }
 
 .btn-cancel:hover {
-  background: #f5f5f5;
-  border-color: #ccc;
+  background: var(--color-background);
+  border-color: var(--color-slate-300);
 }
 
 .btn-confirm {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--color-primary);
   color: white;
 }
 
 .btn-confirm:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: var(--shadow-md);
+  background: var(--color-primary-hover);
 }
 
 @keyframes overlayFadeIn {

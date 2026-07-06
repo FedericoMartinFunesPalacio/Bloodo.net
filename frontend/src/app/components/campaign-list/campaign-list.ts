@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { CampaignService } from '../../services/campaign.service';
 import { ToastService } from '../../services/toast.service';
@@ -10,13 +11,27 @@ import { animate, stagger } from 'animejs';
 @Component({
   selector: 'app-campaign-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, EnumLabelPipe],
+  imports: [CommonModule, FormsModule, RouterModule, EnumLabelPipe],
   templateUrl: './campaign-list.html',
   styleUrls: ['./campaign-list.css']
 })
 export class CampaignListComponent implements OnInit {
   campaigns: ResponseCampaign[] = [];
   loading = true;
+  searchTerm = '';
+
+  get filteredCampaigns(): ResponseCampaign[] {
+    if (!this.searchTerm.trim()) return this.campaigns;
+    const term = this.searchTerm.toLowerCase().trim();
+    const matching = this.campaigns.filter(c => c.title.toLowerCase().includes(term));
+    const nonMatching = this.campaigns.filter(c => !c.title.toLowerCase().includes(term));
+    return [...matching, ...nonMatching];
+  }
+
+  isSearchResult(index: number): boolean {
+    if (!this.searchTerm.trim()) return false;
+    return index === 0;
+  }
 
   constructor(
     private campaignService: CampaignService,

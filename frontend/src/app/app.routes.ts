@@ -13,6 +13,7 @@ import { MyDonationsComponent } from './components/my-donations/my-donations';
 import { HomeComponent } from './pages/home/home';
 import { LandingComponent } from './pages/landing/landing';
 import { PrincipalDummyComponent } from './pages/principal-dummy-component/principal-dummy-component';
+import { TermsAndConditionsComponent } from './components/terms-and-conditions/terms-and-conditions';
 import { AuthGuard, RoleGuard } from './guards/auth.guard';
 import { UserRole } from './models/user';
 
@@ -88,5 +89,6 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   { path: 'dummy', component: PrincipalDummyComponent, canActivate: [AuthGuard] },
+  { path: 'terms-and-conditions', component: TermsAndConditionsComponent },
   { path: '**', redirectTo: '' }
 ];

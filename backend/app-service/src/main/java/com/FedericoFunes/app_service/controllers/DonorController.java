@@ -33,7 +33,7 @@ public class DonorController {
 
     @Operation(summary = "Porcentaje de tipos de sangre", description = "Devuelve el porcentaje de donadores por tipo de sangre respecto al total de donadores activos.")
     @ApiResponse(responseCode = "200", description = "Porcentajes obtenidos correctamente.")
-    @PreAuthorize("hasAnyRole('ADMIN','DONOR')")
+    @PreAuthorize("hasAnyRole('ADMIN','DONOR', 'ORGANIZER')")
     @GetMapping("/metrics/blood-type-percentage")
     public ResponseEntity<List<BloodTypePercentageDTO>> GetBloodTypePercentage() {
         return ResponseEntity.ok(donorService.GetBloodTypePercentage());

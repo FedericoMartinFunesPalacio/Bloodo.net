@@ -1,5 +1,5 @@
 <div class="campaign-detail-container">
-    <button class="btn-back" (click)="goBack()"><span class="mat-icon">arrow_back</span> Volver</button>
+    <button class="btn-back" (click)="goBack()"><mat-icon>arrow_back</mat-icon> Volver</button>
 
   @if (loading) {
     <div class="loading">Cargando detalles de la campaña...</div>
@@ -22,6 +22,24 @@
 
       @if (activeTab === 'info') {
         <div class="campaign-detail-info">
+          @if (campaign.bloodGroupRequired || campaign.bloodFactorRequired) {
+            <div class="info-section">
+              <h3>Requisitos de Sangre</h3>
+              @if (campaign.bloodGroupRequired) {
+                <div class="info-item">
+                  <span class="label">Grupo Sanguíneo:</span>
+                  <span class="value">{{ campaign.bloodGroupRequired | enumLabel }}</span>
+                </div>
+              }
+              @if (campaign.bloodFactorRequired) {
+                <div class="info-item">
+                  <span class="label">Factor RH:</span>
+                  <span class="value">{{ campaign.bloodFactorRequired | enumLabel }}</span>
+                </div>
+              }
+            </div>
+          }
+
           <div class="info-section">
             <h3>Información General</h3>
             <div class="info-item">
@@ -50,24 +68,6 @@
               </div>
             }
           </div>
-
-          @if (campaign.bloodGroupRequired || campaign.bloodFactorRequired) {
-            <div class="info-section">
-              <h3>Requisitos de Sangre</h3>
-              @if (campaign.bloodGroupRequired) {
-                <div class="info-item">
-                  <span class="label">Grupo Sanguíneo:</span>
-                  <span class="value">{{ campaign.bloodGroupRequired | enumLabel }}</span>
-                </div>
-              }
-              @if (campaign.bloodFactorRequired) {
-                <div class="info-item">
-                  <span class="label">Factor RH:</span>
-                  <span class="value">{{ campaign.bloodFactorRequired | enumLabel }}</span>
-                </div>
-              }
-            </div>
-          }
         </div>
       }
 
@@ -79,7 +79,7 @@
             <div class="metrics-grid">
               @if (campaignBloodEstimated) {
                 <div class="metric-card blood">
-                  <span class="metric-icon"><span class="mat-icon">bloodtype</span></span>
+                  <span class="metric-icon"><mat-icon>bloodtype</mat-icon></span>
                   <div class="metric-value">{{ campaignBloodEstimated.estimatedLiters }} LTs</div>
                   <div class="metric-label">Sangre estimada recolectada</div>
                   <div class="metric-sub">{{ campaignBloodEstimated.subscribedDonors }} donadores suscritos</div>
@@ -88,7 +88,7 @@
 
               @if (campaignLivesSaved) {
                 <div class="metric-card lives">
-                  <span class="metric-icon"><span class="mat-icon">favorite</span></span>
+                  <span class="metric-icon"><mat-icon>favorite</mat-icon></span>
                   <div class="metric-value">{{ campaignLivesSaved.estimatedLivesSaved }}</div>
                   <div class="metric-label">Vidas estimadas salvadas</div>
                   <div class="metric-sub">{{ campaignLivesSaved.subscribedDonors }} donadores × 3</div>
@@ -122,14 +122,14 @@
       }
 
       @if (isDonor) {
-        <div class="donor-actions">
+        <div class="donor-actions" id="tour-campaign-detail-subscribe">
           @if (isSubscribed) {
             <button class="btn-secondary" (click)="unsubscribeFromCampaign()">
-              <span class="mat-icon">check</span> Ya Suscrito - Desuscribirse
+              <mat-icon>check</mat-icon> Ya Suscrito - Desuscribirse
             </button>
           } @else {
             <button class="btn-primary" (click)="subscribeToCampaign()">
-              <span class="mat-icon">add</span> Suscribirse
+              <mat-icon>add</mat-icon> Suscribirse
             </button>
           }
         </div>

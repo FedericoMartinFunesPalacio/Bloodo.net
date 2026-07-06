@@ -2,12 +2,14 @@ package com.FedericoFunes.app_service.controllers;
 
 import com.FedericoFunes.app_service.dtos.campaigns.BloodEstimatedDTO;
 import com.FedericoFunes.app_service.dtos.campaigns.BloodTypeRankingDTO;
+import com.FedericoFunes.app_service.dtos.campaigns.GeographicDistributionDTO;
 import com.FedericoFunes.app_service.dtos.campaigns.LivesSavedDTO;
 import com.FedericoFunes.app_service.dtos.campaigns.RequestCampaignsDTO;
 import com.FedericoFunes.app_service.dtos.campaigns.ResponseCampaignsDTO;
 import com.FedericoFunes.app_service.dtos.campaigns.SubscribedDonorDTO;
 import com.FedericoFunes.app_service.dtos.campaigns.TotalBloodEstimatedDTO;
 import com.FedericoFunes.app_service.dtos.campaigns.TotalLivesSavedDTO;
+import com.FedericoFunes.app_service.dtos.donor.BloodTypePercentageDTO;
 import com.FedericoFunes.app_service.services.CampaignsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -161,5 +163,77 @@ public class CampaignsController {
     @PostMapping("/{id}/notify-upcoming")
     public void notifyUpcoming(@PathVariable Long id) {
         campaignsService.notifyUpcomingCampaign(id);
+    }
+
+    @Operation(summary = "Sangre total recolectada por organizador", description = "Devuelve el total estimado de sangre recolectada en todas las campañas de un organizador.")
+    @ApiResponse(responseCode = "200", description = "Métrica obtenida correctamente.")
+    @PreAuthorize("hasAnyRole('ADMIN','ORGANIZER')")
+    @GetMapping("/metrics/organizer/{organizerId}/blood-total")
+    public ResponseEntity<TotalBloodEstimatedDTO> getTotalBloodByOrganizer(@PathVariable Long organizerId) {
+        return ResponseEntity.ok(campaignsService.getTotalBloodByOrganizer(organizerId));
+    }
+
+    @Operation(summary = "Porcentaje de tipos de sangre por organizador", description = "Devuelve la distribución porcentual de tipos de sangre de los donadores en las campañas de un organizador.")
+    @ApiResponse(responseCode = "200", description = "Métrica obtenida correctamente.")
+    @PreAuthorize("hasAnyRole('ADMIN','ORGANIZER')")
+    @GetMapping("/metrics/organizer/{organizerId}/blood-type-percentage")
+    public ResponseEntity<List<BloodTypePercentageDTO>> getBloodTypePercentageByOrganizer(@PathVariable Long organizerId) {
+        return ResponseEntity.ok(campaignsService.getBloodTypePercentageByOrganizer(organizerId));
+    }
+
+    @Operation(summary = "Cantidad de campañas creadas por organizador", description = "Devuelve el total de campañas creadas por un organizador.")
+    @ApiResponse(responseCode = "200", description = "Métrica obtenida correctamente.")
+    @PreAuthorize("hasAnyRole('ADMIN','ORGANIZER')")
+    @GetMapping("/metrics/organizer/{organizerId}/campaign-count")
+    public ResponseEntity<Long> getCampaignCountByOrganizer(@PathVariable Long organizerId) {
+        return ResponseEntity.ok(campaignsService.getCampaignCountByOrganizer(organizerId));
+    }
+
+    @Operation(summary = "Cantidad de campañas finalizadas por organizador", description = "Devuelve el total de campañas finalizadas de un organizador.")
+    @ApiResponse(responseCode = "200", description = "Métrica obtenida correctamente.")
+    @PreAuthorize("hasAnyRole('ADMIN','ORGANIZER')")
+    @GetMapping("/metrics/organizer/{organizerId}/finished-count")
+    public ResponseEntity<Long> getFinishedCampaignCountByOrganizer(@PathVariable Long organizerId) {
+        return ResponseEntity.ok(campaignsService.getFinishedCampaignCountByOrganizer(organizerId));
+    }
+
+    @Operation(summary = "Total de donadores en campañas del organizador", description = "Devuelve la cantidad total de suscripciones de donadores en todas las campañas de un organizador (incluye repetidos).")
+    @ApiResponse(responseCode = "200", description = "Métrica obtenida correctamente.")
+    @PreAuthorize("hasAnyRole('ADMIN','ORGANIZER')")
+    @GetMapping("/metrics/organizer/{organizerId}/total-donors")
+    public ResponseEntity<Long> getTotalDonorsByOrganizer(@PathVariable Long organizerId) {
+        return ResponseEntity.ok(campaignsService.getTotalDonorsByOrganizer(organizerId));
+    }
+
+    @Operation(summary = "Promedio de donadores por campaña", description = "Devuelve el promedio de donadores suscritos por campaña de un organizador.")
+    @ApiResponse(responseCode = "200", description = "Métrica obtenida correctamente.")
+    @PreAuthorize("hasAnyRole('ADMIN','ORGANIZER')")
+    @GetMapping("/metrics/organizer/{organizerId}/average-donors")
+    public ResponseEntity<Double> getAverageDonorsPerCampaign(@PathVariable Long organizerId) {
+        return ResponseEntity.ok(campaignsService.getAverageDonorsPerCampaign(organizerId));
+    }
+
+    @Operation(summary = "Vidas salvadas por organizador", description = "Devuelve la estimación de vidas salvadas por un organizador (total suscriptores × 3).")
+    @ApiResponse(responseCode = "200", description = "Métrica obtenida correctamente.")
+    @PreAuthorize("hasAnyRole('ADMIN','ORGANIZER')")
+    @GetMapping("/metrics/organizer/{organizerId}/lives-saved")
+    public ResponseEntity<TotalLivesSavedDTO> getLivesSavedByOrganizer(@PathVariable Long organizerId) {
+        return ResponseEntity.ok(campaignsService.getLivesSavedByOrganizer(organizerId));
+    }
+
+    @Operation(summary = "Distribución geográfica de campañas", description = "Devuelve las ubicaciones (latitud, longitud) de todas las campañas de un organizador.")
+    @ApiResponse(responseCode = "200", description = "Métrica obtenida correctamente.")
+    @PreAuthorize("hasAnyRole('ADMIN','ORGANIZER')")
+    @GetMapping("/metrics/organizer/{organizerId}/geographic-distribution")
+    public ResponseEntity<List<GeographicDistributionDTO>> getGeographicDistributionByOrganizer(@PathVariable Long organizerId) {
+        return ResponseEntity.ok(campaignsService.getGeographicDistributionByOrganizer(organizerId));
+    }
+
+    @Operation(summary = "Campañas activas suscritas por donador", description = "Devuelve la lista de campañas activas (sin finalizar) a las que un donador está suscrito.")
+    @ApiResponse(responseCode = "200", description = "Lista de campañas obtenida correctamente.")
+    @PreAuthorize("hasAnyRole('ADMIN','DONOR')")
+    @GetMapping("/subscribed-by/{donorId}")
+    public ResponseEntity<List<ResponseCampaignsDTO>> getActiveSubscribedCampaigns(@PathVariable Long donorId) {
+        return ResponseEntity.ok(campaignsService.getActiveSubscribedCampaigns(donorId));
     }
 }

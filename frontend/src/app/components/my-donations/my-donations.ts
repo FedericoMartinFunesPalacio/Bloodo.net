@@ -2,7 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { DonorService } from '../../services/donor.service';
+import { CampaignService } from '../../services/campaign.service';
+import { ToastService } from '../../services/toast.service';
 import { DonorStats, DonorHealth } from '../../models/metrics';
+import { ResponseCampaign } from '../../models/campaign';
 import { ResponseUser } from '../../models/user';
 import { EnumLabelPipe } from '../../pipes/enum-label.pipe';
 import { animate, stagger } from 'animejs';
@@ -18,19 +21,28 @@ import { MatIcon } from '@angular/material/icon';
 export class MyDonationsComponent implements OnInit {
   stats: DonorStats | null = null;
   health: DonorHealth | null = null;
+  subscribedCampaigns: ResponseCampaign[] = [];
   loading = true;
   error = false;
+  donorId = 0;
   private animated = false;
+
+  confirmUnsub = false;
+  confirmCampaignId: number | null = null;
+  confirmCampaignTitle = '';
 
   constructor(
     private authService: AuthService,
-    private donorService: DonorService
+    private donorService: DonorService,
+    private campaignService: CampaignService,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
     this.authService.getCurrentUser().subscribe(user => {
       if (user && user.roleId) {
-        this.loadData(Number(user.roleId));
+        this.donorId = Number(user.roleId);
+        this.loadData(this.donorId);
       }
     });
   }
@@ -55,6 +67,45 @@ export class MyDonationsComponent implements OnInit {
       },
       error: () => {}
     });
+    this.loadSubscribedCampaigns();
+  }
+
+  private loadSubscribedCampaigns(): void {
+    this.campaignService.getActiveSubscribedCampaigns(this.donorId).subscribe({
+      next: (campaigns) => {
+        this.subscribedCampaigns = campaigns;
+        this.animateSubscribedList();
+      },
+      error: () => {}
+    });
+  }
+
+  unsubscribe(campaignId: number | undefined, campaignTitle: string): void {
+    if (!campaignId) return;
+    this.confirmCampaignId = campaignId;
+    this.confirmCampaignTitle = campaignTitle;
+    this.confirmUnsub = true;
+  }
+
+  confirmUnsubscribe(): void {
+    if (!this.confirmCampaignId) return;
+    this.campaignService.unsubscribeFromCampaign(this.confirmCampaignId, this.donorId).subscribe({
+      next: () => {
+        this.subscribedCampaigns = this.subscribedCampaigns.filter(c => c.id !== this.confirmCampaignId);
+        this.toast.success('Te desuscribiste correctamente');
+        this.cancelUnsub();
+      },
+      error: () => {
+        this.toast.error('Error al desuscribirse');
+        this.cancelUnsub();
+      }
+    });
+  }
+
+  cancelUnsub(): void {
+    this.confirmUnsub = false;
+    this.confirmCampaignId = null;
+    this.confirmCampaignTitle = '';
   }
 
   private animateContent(): void {
@@ -88,6 +139,21 @@ export class MyDonationsComponent implements OnInit {
           scale: [0.9, 1],
           duration: 400,
           delay: stagger(80, { start: 100 }),
+          ease: 'outQuad'
+        });
+      }
+    }, 50);
+  }
+
+  private animateSubscribedList(): void {
+    setTimeout(() => {
+      const items = document.querySelectorAll('.sub-campaign-item');
+      if (items.length) {
+        animate(items, {
+          opacity: [0, 1],
+          translateY: [12, 0],
+          duration: 350,
+          delay: stagger(50, { start: 100 }),
           ease: 'outQuad'
         });
       }

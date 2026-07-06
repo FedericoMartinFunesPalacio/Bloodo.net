@@ -8,6 +8,7 @@ import { ToastService } from '../../services/toast.service';
 import { EnumLabelPipe } from '../../pipes/enum-label.pipe';
 import { ResponseCampaign } from '../../models/campaign';
 import { SubscribedDonor } from '../../models/donor';
+import { TotalBloodEstimated, TotalLivesSaved, BloodTypePercentage, GeographicDistribution } from '../../models/metrics';
 import { animate, stagger } from 'animejs';
 import { MatIcon } from '@angular/material/icon';
 
@@ -23,12 +24,33 @@ export class MyCampaignsComponent implements OnInit {
   loading = true;
   organizerId: number = 0;
 
+  activeTab: 'info' | 'metrics' = 'info';
+
   showSubscribedList = false;
   subscribedDonors: SubscribedDonor[] = [];
   selectedCampaignId: number | null = null;
 
   finishCampaignId: number | null = null;
   finishDate: string = '';
+
+  metricsLoading = true;
+  bloodTotal: TotalBloodEstimated | null = null;
+  livesTotal: TotalLivesSaved | null = null;
+  bloodTypePercentages: BloodTypePercentage[] = [];
+  campaignCount = 0;
+  finishedCount = 0;
+  totalDonors = 0;
+  averageDonors = 0;
+  geoDistribution: GeographicDistribution[] = [];
+
+  hoveredBt: BloodTypePercentage | null = null;
+  fillHeight = 0;
+  pieGradient = '';
+
+  private readonly btColors = [
+    '#ef4444', '#f97316', '#eab308', '#22c55e',
+    '#3b82f6', '#8b5cf6', '#ec4899', '#6b7280'
+  ];
 
   constructor(
     private campaignService: CampaignService,
@@ -76,6 +98,164 @@ export class MyCampaignsComponent implements OnInit {
         console.error('Error loading my campaigns:', err);
       }
     });
+  }
+
+  switchTab(tab: 'info' | 'metrics'): void {
+    this.activeTab = tab;
+    if (tab === 'info') {
+      this.loadMyCampaigns();
+    }
+    if (tab === 'metrics') {
+      this.bloodTotal = null;
+      this.livesTotal = null;
+      this.fillHeight = 0;
+      this.loadMetrics();
+    }
+  }
+
+  onMetricsTabClick(): void {
+    if (!this.hasFinishedCampaigns) {
+      this.toast.warning('Finalizá al menos una campaña para ver las métricas');
+      return;
+    }
+    this.switchTab('metrics');
+  }
+
+  get hasFinishedCampaigns(): boolean {
+    return this.campaigns.some(c => !!c.endDate);
+  }
+
+  get activeCampaigns(): ResponseCampaign[] {
+    return this.campaigns.filter(c => !c.endDate);
+  }
+
+  getBtColor(index: number): string {
+    return this.btColors[index % this.btColors.length];
+  }
+
+  private computePieGradient(): void {
+    if (!this.bloodTypePercentages.length) {
+      this.pieGradient = '';
+      return;
+    }
+    const stops: string[] = [];
+    let acc = 0;
+    for (let i = 0; i < this.bloodTypePercentages.length; i++) {
+      const bt = this.bloodTypePercentages[i];
+      const start = acc;
+      acc += bt.percentage;
+      stops.push(`${this.getBtColor(i)} ${start}% ${acc}%`);
+    }
+    this.pieGradient = `conic-gradient(${stops.join(', ')})`;
+  }
+
+  getVBarHeight(): number {
+    if (this.totalDonors === 0) return 0;
+    return Math.min((this.averageDonors / this.totalDonors) * 100, 100);
+  }
+
+  private loadMetrics(): void {
+    this.metricsLoading = true;
+    let loaded = 0;
+    const total = 8;
+    const onDone = () => {
+      loaded++;
+      if (loaded >= total) {
+        this.metricsLoading = false;
+        this.animateMetrics();
+      }
+    };
+
+    this.campaignService.getOrganizerBloodTotal(this.organizerId).subscribe({
+      next: (data) => {
+        this.bloodTotal = data;
+        this.animateBloodDrop(data.estimatedLiters);
+      },
+      error: () => {},
+      complete: onDone
+    });
+    this.campaignService.getOrganizerLivesSaved(this.organizerId).subscribe({
+      next: (data) => this.livesTotal = data,
+      error: () => {},
+      complete: onDone
+    });
+    this.campaignService.getOrganizerBloodTypePercentage(this.organizerId).subscribe({
+      next: (data) => {
+        this.bloodTypePercentages = data;
+        this.computePieGradient();
+      },
+      error: () => {},
+      complete: onDone
+    });
+    this.campaignService.getOrganizerCampaignCount(this.organizerId).subscribe({
+      next: (data) => this.campaignCount = data,
+      error: () => {},
+      complete: onDone
+    });
+    this.campaignService.getOrganizerFinishedCount(this.organizerId).subscribe({
+      next: (data) => this.finishedCount = data,
+      error: () => {},
+      complete: onDone
+    });
+    this.campaignService.getOrganizerTotalDonors(this.organizerId).subscribe({
+      next: (data) => this.totalDonors = data,
+      error: () => {},
+      complete: onDone
+    });
+    this.campaignService.getOrganizerAverageDonors(this.organizerId).subscribe({
+      next: (data) => this.averageDonors = data,
+      error: () => {},
+      complete: onDone
+    });
+    this.campaignService.getOrganizerGeographicDistribution(this.organizerId).subscribe({
+      next: (data) => this.geoDistribution = data,
+      error: () => {},
+      complete: onDone
+    });
+  }
+
+  private animateBloodDrop(liters: number): void {
+    setTimeout(() => {
+      const maxLiters = Math.max(liters, 1);
+      const pct = Math.min(liters / maxLiters, 1);
+      this.fillHeight = pct * 170;
+    }, 100);
+  }
+
+  private animateMetrics(): void {
+    setTimeout(() => {
+      const cards = document.querySelectorAll('.donation-card');
+      if (cards.length) {
+        animate(cards, {
+          opacity: [0, 1],
+          translateY: [20, 0],
+          duration: 600,
+          delay: stagger(120, { start: 200 }),
+          ease: 'outQuad'
+        });
+      }
+
+      const heart = document.querySelector('.lives-heart');
+      if (heart) {
+        animate(heart, {
+          scale: [0.5, 1],
+          duration: 1200,
+          ease: 'outElastic(1, 0.4)',
+          delay: 500
+        });
+      }
+
+      const barFills = document.querySelectorAll('.campaigns-bar-finished, .hbar-fill');
+      if (barFills.length) {
+        barFills.forEach((el) => {
+          const target = (el as HTMLElement).style.width || (el as HTMLElement).style.width;
+          (el as HTMLElement).style.width = '0%';
+          setTimeout(() => {
+            (el as HTMLElement).style.width = target;
+          }, 400);
+        });
+      }
+    }, 50);
   }
 
   private animateCards(): void {

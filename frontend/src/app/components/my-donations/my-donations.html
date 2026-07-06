@@ -1,6 +1,6 @@
 <div class="my-donations-page">
-  <div class="page-header">
-    <h1><span class="mat-icon">bloodtype</span> Mis Donaciones</h1>
+  <div class="page-header" id="tour-my-donations-header">
+    <h1><mat-icon>bloodtype</mat-icon> Mis Donaciones</h1>
     <p class="subtitle">Seguimiento de tus donaciones e información de salud</p>
   </div>
 
@@ -14,21 +14,51 @@
       <p>Error al cargar los datos. Intentá nuevamente.</p>
     </div>
   } @else {
-    <div class="stats-grid">
+
+    @if (subscribedCampaigns.length > 0) {
+      <div class="subscribed-section" id="tour-my-donations-subscriptions">
+        <h2><mat-icon>volunteer_activism</mat-icon> Mis Suscripciones Activas</h2>
+        <div class="sub-campaign-list">
+          @for (campaign of subscribedCampaigns; track campaign.id) {
+            <div class="sub-campaign-item">
+              <div class="sub-campaign-info">
+                <span class="sub-campaign-title">{{ campaign.title }}</span>
+                <span class="sub-campaign-detail">
+                  <mat-icon>event</mat-icon> {{ campaign.startDate }} · {{ campaign.startTime }}
+                </span>
+                <span class="sub-campaign-detail">
+                  <mat-icon>location_on</mat-icon> {{ campaign.direction }}
+                </span>
+              </div>
+              <div class="sub-campaign-actions">
+                <a class="sub-campaign-map" [href]="'https://www.google.com/maps?q=' + campaign.latitude + ',' + campaign.longitude" target="_blank" rel="noopener" title="Ver en mapa">
+                  <mat-icon>map</mat-icon>
+                </a>
+                <button class="sub-campaign-unsub" (click)="unsubscribe(campaign.id, campaign.title)" title="Desuscribirme">
+                  <mat-icon>person_remove</mat-icon>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <div class="stats-grid" id="tour-my-donations-stats">
       <div class="stat-card">
-        <div class="stat-icon"><span class="mat-icon">emoji_events</span></div>
+        <div class="stat-icon"><mat-icon>emoji_events</mat-icon></div>
         <div class="stat-value">{{ stats?.campaignsAttended || 0 }}</div>
         <div class="stat-label">Campañas asistidas</div>
         <div class="stat-subtitle">Veces que donaste sangre</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon"><span class="mat-icon">vaccination</span></div>
+        <div class="stat-icon"><mat-icon>vaccines</mat-icon></div>
         <div class="stat-value">{{ stats?.estimatedMl || 0 }} ml</div>
         <div class="stat-label">Sangre donada (estimado)</div>
         <div class="stat-subtitle">{{ stats?.estimatedLiters || 0 }} litros en total</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon"><span class="mat-icon">favorite</span></div>
+        <div class="stat-icon"><mat-icon>favorite</mat-icon></div>
         <div class="stat-value">{{ (stats?.campaignsAttended || 0) * 3 }}</div>
         <div class="stat-label">Vidas salvadas (estimado)</div>
         <div class="stat-subtitle">3 vidas por cada donación</div>
@@ -36,21 +66,21 @@
     </div>
 
     @if (health) {
-      <div class="health-section">
+      <div class="health-section" id="tour-my-donations-health">
         <h2>Información de Salud</h2>
         <div class="health-grid">
           <div class="health-card">
-            <div class="health-icon"><span class="mat-icon">bloodtype</span></div>
+            <div class="health-icon"><mat-icon>bloodtype</mat-icon></div>
             <div class="health-label">Tipo de sangre</div>
             <div class="health-value blood-type">{{ health.bloodType | enumLabel }}</div>
           </div>
           <div class="health-card">
-            <div class="health-icon"><span class="mat-icon">calendar_today</span></div>
+            <div class="health-icon"><mat-icon>calendar_today</mat-icon></div>
             <div class="health-label">Edad</div>
             <div class="health-value">{{ health.age }} años</div>
           </div>
           <div class="health-card">
-            <div class="health-icon"><span class="mat-icon">monitor_weight</span></div>
+            <div class="health-icon"><mat-icon>monitor_weight</mat-icon></div>
             <div class="health-label">IMC</div>
             <div class="health-value" [style.color]="getBmiColor(health.bmi)">
               {{ health.bmi | number:'1.1-1' }}
@@ -58,15 +88,15 @@
             </div>
           </div>
           <div class="health-card">
-            <div class="health-icon"><span class="mat-icon">schedule</span></div>
+            <div class="health-icon"><mat-icon>schedule</mat-icon></div>
             <div class="health-label">Última donación</div>
             <div class="health-value">{{ health.lastDonationDate || 'Sin registros' }}</div>
           </div>
           <div class="health-card">
-            <div class="health-icon"><span class="mat-icon">alarm</span></div>
+            <div class="health-icon"><mat-icon>alarm</mat-icon></div>
             <div class="health-label">Próxima fecha elegible</div>
             <div class="health-value" [class.pending]="!health.nextEligibleDate">
-              {{ health.nextEligibleDate || 'Sin donaciones previas' }}
+              {{ health.nextEligibleDate || 'Sin donaciones previas. Puedes donar a partir de hoy' }}
             </div>
           </div>
         </div>
@@ -74,3 +104,24 @@
     }
   }
 </div>
+
+@if (confirmUnsub) {
+  <div class="confirm-overlay" (click)="cancelUnsub()">
+    <div class="confirm-modal" (click)="$event.stopPropagation()">
+      <div class="confirm-icon-wrapper">
+        <mat-icon class="confirm-icon">person_remove</mat-icon>
+      </div>
+      <h3 class="confirm-title">Desuscribirse</h3>
+      <p class="confirm-question">
+        ¿Seguro que querés desuscribirte de
+        <strong class="confirm-campaign-name">"{{ confirmCampaignTitle }}"</strong>?
+      </p>
+      <div class="confirm-actions">
+        <button class="btn-confirm-cancel" (click)="cancelUnsub()">Cancelar</button>
+        <button class="btn-confirm-ok" (click)="confirmUnsubscribe()">
+          <mat-icon>check</mat-icon> Sí, desuscribirme
+        </button>
+      </div>
+    </div>
+  </div>
+}
