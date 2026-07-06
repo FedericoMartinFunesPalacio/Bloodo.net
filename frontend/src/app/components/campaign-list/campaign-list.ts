@@ -7,11 +7,12 @@ import { ToastService } from '../../services/toast.service';
 import { EnumLabelPipe } from '../../pipes/enum-label.pipe';
 import { ResponseCampaign } from '../../models/campaign';
 import { animate, stagger } from 'animejs';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   selector: 'app-campaign-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, EnumLabelPipe],
+  imports: [CommonModule, FormsModule, RouterModule, EnumLabelPipe, MatIcon],
   templateUrl: './campaign-list.html',
   styleUrls: ['./campaign-list.css']
 })

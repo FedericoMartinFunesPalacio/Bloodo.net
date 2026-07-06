@@ -1,4 +1,6 @@
-<app-toast></app-toast>
+@if (!isLandingPage()) {
+  <app-toast></app-toast>
+}
 <app-confirm-dialog></app-confirm-dialog>
 <app-faq-modal></app-faq-modal>
 

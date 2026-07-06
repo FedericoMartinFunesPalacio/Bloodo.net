@@ -10,6 +10,7 @@ public class DotenvEnvironmentPostProcessor implements EnvironmentPostProcessor 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
         Dotenv dotenv = Dotenv.configure()
+                .directory("C:/Users/funes/Desktop/Bloodo.net/backend/app-service")
                 .ignoreIfMissing()
                 .load();
 

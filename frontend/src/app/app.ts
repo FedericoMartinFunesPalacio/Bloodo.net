@@ -21,4 +21,8 @@ export class App {
     const url = this.router.url;
     return url === '/' || url.startsWith('/auth') || url.startsWith('/register') || url.startsWith('/forgot-password');
   }
+
+  isLandingPage(): boolean {
+    return this.router.url === '/';
+  }
 }
