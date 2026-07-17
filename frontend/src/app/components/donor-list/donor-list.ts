@@ -8,11 +8,12 @@ import { EnumLabelPipe } from '../../pipes/enum-label.pipe';
 import { ResponseDonor } from '../../models/donor';
 import { animate, stagger } from 'animejs';
 import { MatIcon } from '@angular/material/icon';
+import { LoadingComponent } from '../loading/loading';
 
 @Component({
   selector: 'app-donor-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, EnumLabelPipe, MatIcon],
+  imports: [CommonModule, RouterModule, EnumLabelPipe, MatIcon, LoadingComponent],
   templateUrl: './donor-list.html',
   styleUrls: ['./donor-list.css']
 })

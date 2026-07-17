@@ -4,7 +4,7 @@
   </div>
 
   @if (loading) {
-    <div class="loading">Cargando campañas...</div>
+    <app-loading message="Cargando campañas..."></app-loading>
   } @else if (campaigns.length === 0) {
     <div class="empty-state">
       <p>No hay campañas disponibles en este momento</p>

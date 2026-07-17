@@ -9,11 +9,12 @@ import { EnumLabelPipe } from '../../pipes/enum-label.pipe';
 import { RequestCampaign, ResponseCampaign } from '../../models/campaign';
 import { BloodFactor, BloodGroup } from '../../models/donor';
 import { isFutureDate } from '../../utils/validators';
+import { LoadingComponent } from '../loading/loading';
 
 @Component({
   selector: 'app-campaign-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, EnumLabelPipe],
+  imports: [CommonModule, FormsModule, EnumLabelPipe, LoadingComponent],
   templateUrl: './campaign-form.html',
   styleUrls: ['./campaign-form.css']
 })

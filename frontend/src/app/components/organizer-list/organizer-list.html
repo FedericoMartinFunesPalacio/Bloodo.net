@@ -7,7 +7,7 @@
   </div>
 
   @if (loading) {
-    <div class="loading">Cargando organizadores...</div>
+    <app-loading message="Cargando organizadores..."></app-loading>
   } @else if (organizers.length === 0) {
     <div class="empty-state">
       <p>No hay organizadores registrados</p>

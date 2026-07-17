@@ -4,7 +4,7 @@
   </div>
 
   @if (loading) {
-    <div class="loading">Cargando...</div>
+    <app-loading></app-loading>
   } @else {
     <form (ngSubmit)="onSubmit()" class="donor-form">
       <div class="form-section">
@@ -105,35 +105,37 @@
       <div class="form-section">
         <h3>Datos Médicos</h3>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label for="bloodGroup">Grupo Sanguíneo *</label>
-            <select
-              id="bloodGroup"
-              [(ngModel)]="form.bloodGroup"
-              name="bloodGroup"
-              required
-            >
-              @for (group of bloodGroups; track group) {
-                <option [value]="group">{{ group | enumLabel }}</option>
-              }
-            </select>
-          </div>
+        @if (!isEditMode) {
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bloodGroup">Grupo Sanguíneo *</label>
+              <select
+                id="bloodGroup"
+                [(ngModel)]="form.bloodGroup"
+                name="bloodGroup"
+                required
+              >
+                @for (group of bloodGroups; track group) {
+                  <option [value]="group">{{ group | enumLabel }}</option>
+                }
+              </select>
+            </div>
 
-          <div class="form-group">
-            <label for="bloodFactor">Factor RH *</label>
-            <select
-              id="bloodFactor"
-              [(ngModel)]="form.bloodFactor"
-              name="bloodFactor"
-              required
-            >
-              @for (factor of bloodFactors; track factor) {
-                <option [value]="factor">{{ factor | enumLabel }}</option>
-              }
-            </select>
+            <div class="form-group">
+              <label for="bloodFactor">Factor RH *</label>
+              <select
+                id="bloodFactor"
+                [(ngModel)]="form.bloodFactor"
+                name="bloodFactor"
+                required
+              >
+                @for (factor of bloodFactors; track factor) {
+                  <option [value]="factor">{{ factor | enumLabel }}</option>
+                }
+              </select>
+            </div>
           </div>
-        </div>
+        }
 
         <div class="form-row">
           <div class="form-group">

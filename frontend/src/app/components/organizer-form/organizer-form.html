@@ -32,7 +32,7 @@
     }
 
     @if (loading) {
-      <div class="loading">Cargando...</div>
+      <app-loading></app-loading>
     } @else if (organizerType === 'emp') {
       <form (ngSubmit)="onSubmit()" class="organizer-form">
         <div class="form-section">

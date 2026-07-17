@@ -14,19 +14,20 @@
 
 .confirm-dialog {
   background: var(--color-surface);
-  border-radius: var(--radius-lg);
-  padding: var(--space-7);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
   width: 90%;
   max-width: 400px;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 20px 60px rgba(37, 99, 235, 0.15), var(--shadow-xl);
   animation: dialogSlideIn 0.3s cubic-bezier(0.21, 1.02, 0.73, 1);
 }
 
 .confirm-header {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  margin-bottom: var(--space-4);
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
 }
 
 .confirm-icon {
@@ -35,11 +36,16 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  background: var(--color-warning-light);
-  color: var(--color-warning);
+  background: var(--color-danger-light);
+  color: var(--color-danger);
   border-radius: 50%;
-  font-size: var(--font-size-xl);
   flex-shrink: 0;
+}
+
+.confirm-icon mat-icon {
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
 }
 
 .confirm-header h3 {
@@ -47,13 +53,19 @@
   font-size: var(--font-size-lg);
   color: var(--color-text);
   font-weight: var(--font-weight-semibold);
+  flex: 1;
+}
+
+.confirm-body {
+  margin-bottom: var(--space-6);
 }
 
 .confirm-message {
   color: var(--color-text-secondary);
   font-size: var(--font-size-base);
-  line-height: var(--line-height-normal);
-  margin: 0 0 var(--space-6);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+  text-align: center;
 }
 
 .confirm-actions {
@@ -85,14 +97,14 @@
 }
 
 .btn-confirm {
-  background: var(--color-primary);
+  background: var(--color-danger);
   color: white;
 }
 
 .btn-confirm:hover {
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
-  background: var(--color-primary-hover);
+  background: var(--color-danger-hover);
 }
 
 @keyframes overlayFadeIn {

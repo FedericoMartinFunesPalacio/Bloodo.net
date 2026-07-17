@@ -15,6 +15,7 @@ import { ResponseCampaign } from '../../models/campaign';
 import { TotalBloodEstimated, TotalLivesSaved, BloodTypePercentage } from '../../models/metrics';
 import { animate, stagger } from 'animejs';
 import { MatIcon } from '@angular/material/icon';
+import { LoadingComponent } from '../../components/loading/loading';
 
 interface StatCard {
   label: string;
@@ -25,7 +26,7 @@ interface StatCard {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, EnumLabelPipe, MatIcon],
+  imports: [CommonModule, RouterModule, EnumLabelPipe, MatIcon, LoadingComponent],
   templateUrl: './home.html',
   styleUrls: ['./home.css']
 })

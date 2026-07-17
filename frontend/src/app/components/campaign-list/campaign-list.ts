@@ -8,11 +8,12 @@ import { EnumLabelPipe } from '../../pipes/enum-label.pipe';
 import { ResponseCampaign } from '../../models/campaign';
 import { animate, stagger } from 'animejs';
 import {MatIcon} from '@angular/material/icon';
+import { LoadingComponent } from '../loading/loading';
 
 @Component({
   selector: 'app-campaign-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, EnumLabelPipe, MatIcon],
+  imports: [CommonModule, FormsModule, RouterModule, EnumLabelPipe, MatIcon, LoadingComponent],
   templateUrl: './campaign-list.html',
   styleUrls: ['./campaign-list.css']
 })

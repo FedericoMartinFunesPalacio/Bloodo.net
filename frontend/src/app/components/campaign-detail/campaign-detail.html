@@ -2,7 +2,7 @@
     <button class="btn-back" (click)="goBack()"><mat-icon>arrow_back</mat-icon> Volver</button>
 
   @if (loading) {
-    <div class="loading">Cargando detalles de la campaña...</div>
+    <app-loading message="Cargando detalles de la campaña..."></app-loading>
   } @else if (campaign) {
     <div class="campaign-detail-card">
       <div class="campaign-detail-header">

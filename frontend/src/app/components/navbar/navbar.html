@@ -91,42 +91,45 @@
           <mat-icon>help_outline</mat-icon>
         </button>
         <div class="profile-wrapper">
-        <button class="btn-profile" (click)="toggleProfile()">
-          <mat-icon>person</mat-icon>
-        </button>
-
-        @if (profileOpen) {
-          <div class="profile-dropdown">
-            <div class="profile-header">
-              <span class="profile-username">{{ currentUser.username }}</span>
-              @if (profileFirstName || profileLastName) {
-                <span class="profile-fullname">{{ profileFirstName }} {{ profileLastName }}</span>
-              }
-            </div>
-            <div class="profile-details">
-              <div class="profile-detail">
-                <mat-icon>email</mat-icon>
-                <span>{{ currentUser.email }}</span>
-              </div>
-              <div class="profile-detail">
-                <mat-icon>phone</mat-icon>
-                <span>{{ currentUser.phone }}</span>
-              </div>
-            </div>
-            <div class="profile-actions">
-              @if (editProfileUrl) {
-                <a [routerLink]="editProfileUrl" class="profile-action" (click)="closeProfile()" title="Editar Perfil">
-                  <mat-icon>edit</mat-icon>
-                </a>
-              }
-              <button class="profile-action" (click)="logout()" title="Cerrar Sesión">
-                <mat-icon>logout</mat-icon>
-              </button>
-            </div>
-          </div>
-        }
-      </div>
+          <button class="btn-profile" (click)="toggleProfile()">
+            <mat-icon>person</mat-icon>
+          </button>
+        </div>
       </div>
     }
   </div>
 </nav>
+
+@if (profileOpen && currentUser) {
+  <div class="profile-dropdown-backdrop" (click)="closeProfile()"></div>
+  <div class="profile-dropdown-portal">
+    <div class="profile-dropdown">
+      <div class="profile-header">
+        <span class="profile-username">{{ currentUser.username }}</span>
+        @if (profileFirstName || profileLastName) {
+          <span class="profile-fullname">{{ profileFirstName }} {{ profileLastName }}</span>
+        }
+      </div>
+      <div class="profile-details">
+        <div class="profile-detail">
+          <mat-icon>email</mat-icon>
+          <span>{{ currentUser.email }}</span>
+        </div>
+        <div class="profile-detail">
+          <mat-icon>phone</mat-icon>
+          <span>{{ currentUser.phone }}</span>
+        </div>
+      </div>
+      <div class="profile-actions">
+        @if (editProfileUrl) {
+          <a [routerLink]="editProfileUrl" class="profile-action" (click)="closeProfile()" title="Editar Perfil">
+            <mat-icon>edit</mat-icon>
+          </a>
+        }
+        <button class="profile-action" (click)="logout()" title="Cerrar Sesión">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+}

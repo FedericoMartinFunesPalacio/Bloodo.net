@@ -7,7 +7,7 @@
   </div>
 
   @if (loading) {
-    <div class="loading">Cargando donadores...</div>
+    <app-loading message="Cargando donadores..."></app-loading>
   } @else if (donors.length === 0) {
     <div class="empty-state">
       <p>No hay donadores registrados</p>

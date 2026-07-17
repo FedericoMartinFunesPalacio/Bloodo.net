@@ -17,7 +17,7 @@
 
   @if (activeTab === 'info') {
     @if (loading) {
-      <div class="loading">Cargando tus campañas...</div>
+      <app-loading message="Cargando tus campañas..."></app-loading>
     } @else if (activeCampaigns.length === 0) {
       <div class="empty-state">
         <p>No tenés campañas activas</p>
@@ -134,7 +134,7 @@
 
   @if (activeTab === 'metrics') {
     @if (metricsLoading) {
-      <div class="loading">Cargando métricas...</div>
+      <app-loading message="Cargando métricas..."></app-loading>
     } @else {
 
       <div class="metrics-section-label">Donación</div>
@@ -307,15 +307,20 @@
 
 @if (finishCampaignId) {
   <div class="modal-overlay" (click)="closeFinishModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-      <h2>Finalizar Campaña</h2>
-      <p>Seleccioná la fecha de finalización:</p>
-      <div class="form-group">
+    <div class="modal-content finish-modal" (click)="$event.stopPropagation()">
+      <div class="finish-modal-header">
+        <span class="finish-modal-icon"><mat-icon>check_circle</mat-icon></span>
+        <h2>Finalizar Campaña</h2>
+        <button class="finish-modal-close" (click)="closeFinishModal()"><mat-icon>close</mat-icon></button>
+      </div>
+      <p class="finish-modal-description">Seleccioná la fecha de finalización de la campaña:</p>
+      <div class="finish-modal-input-group">
+        <label>Fecha de finalización</label>
         <input type="date" [(ngModel)]="finishDate" class="finish-date-input" />
       </div>
       <div class="modal-actions">
-        <button class="btn-secondary" (click)="closeFinishModal()">Cancelar</button>
-        <button class="btn-primary" (click)="confirmFinish()">Finalizar</button>
+        <button class="btn-cancel-modal" (click)="closeFinishModal()">Cancelar</button>
+        <button class="btn-confirm-modal" (click)="confirmFinish()">Finalizar</button>
       </div>
     </div>
   </div>

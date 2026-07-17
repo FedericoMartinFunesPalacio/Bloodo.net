@@ -10,6 +10,7 @@ import { ResponseOrganizerEmp } from '../../models/organizer-emp';
 import { ResponseOrganizerPer } from '../../models/organizer-per';
 import { animate, stagger } from 'animejs';
 import { MatIcon } from '@angular/material/icon';
+import { LoadingComponent } from '../loading/loading';
 
 interface OrganizerItem {
   id: number | undefined;
@@ -25,7 +26,7 @@ interface OrganizerItem {
 @Component({
   selector: 'app-organizer-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatIcon],
+  imports: [CommonModule, RouterModule, MatIcon, LoadingComponent],
   templateUrl: './organizer-list.html',
   styleUrls: ['./organizer-list.css']
 })

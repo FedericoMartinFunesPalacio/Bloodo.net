@@ -12,12 +12,13 @@ import { AuthService } from '../../services/auth.service';
 import { CampaignBloodEstimated, CampaignLivesSaved, BloodTypeRanking } from '../../models/metrics';
 import { MatIcon } from '@angular/material/icon';
 import {DonorService} from '../../services/donor.service';
+import { LoadingComponent } from '../loading/loading';
 declare var google: any;
 
 @Component({
   selector: 'app-campaign-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, EnumLabelPipe, MatIcon],
+  imports: [CommonModule, RouterModule, EnumLabelPipe, MatIcon, LoadingComponent],
   templateUrl: './campaign-detail.html',
   styleUrls: ['./campaign-detail.css']
 })

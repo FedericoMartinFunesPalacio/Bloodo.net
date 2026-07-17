@@ -10,11 +10,12 @@ import { BloodFactor, BloodGroup, Gender } from '../../models/donor';
 import {RequestUser} from '../../models/user';
 import {AuthService} from '../../services/auth.service';
 import { isValidEmail, isValidPhone, isValidDocument, isValidBirthdate } from '../../utils/validators';
+import { LoadingComponent } from '../loading/loading';
 
 @Component({
   selector: 'app-donor-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, EnumLabelPipe],
+  imports: [CommonModule, FormsModule, EnumLabelPipe, LoadingComponent],
   templateUrl: './donor-form.html',
   styleUrls: ['./donor-form.css']
 })

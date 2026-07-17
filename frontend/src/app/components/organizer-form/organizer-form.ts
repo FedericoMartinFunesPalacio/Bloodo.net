@@ -13,13 +13,14 @@ import {RequestUser} from '../../models/user';
 import {AuthService} from '../../services/auth.service';
 import { isValidEmail, isValidPhone, isValidDocument, isValidBirthdate } from '../../utils/validators';
 import { MatIcon } from '@angular/material/icon';
+import { LoadingComponent } from '../loading/loading';
 
 type OrganizerType = 'emp' | 'per' | null;
 
 @Component({
   selector: 'app-organizer-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, EnumLabelPipe, MatIcon],
+  imports: [CommonModule, FormsModule, EnumLabelPipe, MatIcon, LoadingComponent],
   templateUrl: './organizer-form.html',
   styleUrls: ['./organizer-form.css']
 })
@@ -162,7 +163,7 @@ export class OrganizerFormComponent implements OnInit {
                 }, 1500);
               } else {
                 setTimeout(() => {
-                  this.router.navigate(['/campaigns']);
+                  this.router.navigate(['/home']);
                 }, 1500);
               }
             }});
@@ -216,7 +217,7 @@ export class OrganizerFormComponent implements OnInit {
           this.toast.success('Organizador actualizado exitosamente');
           this.loading = false;
           setTimeout(() => {
-            this.router.navigate(['/campaigns']);
+            this.router.navigate(['/home']);
           }, 1500);
         },
         error: (err) => {
@@ -341,7 +342,7 @@ export class OrganizerFormComponent implements OnInit {
 
   goBack(): void {
     if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/campaigns']);
+      this.router.navigate(['/home']);
     } else {
       this.router.navigate(['/auth']);
     }

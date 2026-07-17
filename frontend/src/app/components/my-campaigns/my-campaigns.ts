@@ -11,11 +11,12 @@ import { SubscribedDonor } from '../../models/donor';
 import { TotalBloodEstimated, TotalLivesSaved, BloodTypePercentage, GeographicDistribution } from '../../models/metrics';
 import { animate, stagger } from 'animejs';
 import { MatIcon } from '@angular/material/icon';
+import { LoadingComponent } from '../loading/loading';
 
 @Component({
   selector: 'app-my-campaigns',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, EnumLabelPipe, MatIcon],
+  imports: [CommonModule, RouterModule, FormsModule, EnumLabelPipe, MatIcon, LoadingComponent],
   templateUrl: './my-campaigns.html',
   styleUrls: ['./my-campaigns.css']
 })
