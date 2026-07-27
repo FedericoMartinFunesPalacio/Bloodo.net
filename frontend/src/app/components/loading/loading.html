@@ -1,0 +1,16 @@
+<div class="loading-container">
+  <div class="blood-drop">
+    <svg viewBox="0 0 120 180" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="loadDropClip">
+          <path d="M60 10 C60 10, 15 90, 15 120 C15 150, 35 170, 60 170 C85 170, 105 150, 105 120 C105 90, 60 10, 60 10Z"/>
+        </clipPath>
+      </defs>
+      <path class="drop-outline" d="M60 10 C60 10, 15 90, 15 120 C15 150, 35 170, 60 170 C85 170, 105 150, 105 120 C105 90, 60 10, 60 10Z" fill="none" stroke="var(--color-border)" stroke-width="3"/>
+      <g clip-path="url(#loadDropClip)">
+        <rect class="blood-fill" x="0" y="180" width="120" height="180"/>
+      </g>
+    </svg>
+  </div>
+  <p class="loading-text">{{ message }}</p>
+</div>

@@ -1,0 +1,113 @@
+<div class="donor-list-container">
+  <div class="donor-list-header">
+    <h1>Donadores Registrados</h1>
+    <button class="btn-primary btn-create" routerLink="/donors/new">
+      <mat-icon>person_add</mat-icon> Nuevo Donador
+    </button>
+  </div>
+
+  @if (loading) {
+    <app-loading message="Cargando donadores..."></app-loading>
+  } @else if (donors.length === 0) {
+    <div class="empty-state">
+      <p>No hay donadores registrados</p>
+    </div>
+  } @else {
+    <div class="table-container">
+      <table class="donor-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Documento</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Tipo Sangre</th>
+            <th>Género</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (donor of donors; track donor.id) {
+            <tr>
+              <td class="cell-name">{{ donor.firstName }} {{ donor.lastName }}</td>
+              <td>{{ donor.document }}</td>
+              <td>{{ donor.email }}</td>
+              <td>{{ donor.phoneNumber }}</td>
+              <td>
+                <span class="blood-tag">
+                  {{ donor.bloodGroup | enumLabel }} {{ donor.bloodFactor | enumLabel }}
+                </span>
+              </td>
+              <td>{{ donor.gender | enumLabel }}</td>
+              <td>
+                <span class="status" [class.active]="donor.isActive" [class.inactive]="!donor.isActive">
+                  @if (donor.isActive) { Activo } @else { Inactivo }
+                </span>
+              </td>
+              <td class="cell-actions">
+                @if (isAdmin) {
+                  <button class="btn-icon btn-edit" (click)="editDonor(donor.id)" title="Editar">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button class="btn-icon btn-delete" (click)="deleteDonor(donor.id)" title="Eliminar">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mobile-cards">
+      @for (donor of donors; track donor.id) {
+        <div class="donor-card-mobile">
+          <div class="donor-card-header">
+            <span class="donor-card-name">{{ donor.firstName }} {{ donor.lastName }}</span>
+            <span class="status" [class.active]="donor.isActive" [class.inactive]="!donor.isActive">
+              @if (donor.isActive) { Activo } @else { Inactivo }
+            </span>
+          </div>
+          <div class="donor-card-row">
+            <span class="donor-card-label">Documento</span>
+            <span class="donor-card-value">{{ donor.document }}</span>
+          </div>
+          <div class="donor-card-row">
+            <span class="donor-card-label">Email</span>
+            <span class="donor-card-value">{{ donor.email }}</span>
+          </div>
+          <div class="donor-card-row">
+            <span class="donor-card-label">Teléfono</span>
+            <span class="donor-card-value">{{ donor.phoneNumber }}</span>
+          </div>
+          <div class="donor-card-row">
+            <span class="donor-card-label">Tipo Sangre</span>
+            <span class="donor-card-value">
+              <span class="blood-tag">{{ donor.bloodGroup | enumLabel }} {{ donor.bloodFactor | enumLabel }}</span>
+            </span>
+          </div>
+          <div class="donor-card-row">
+            <span class="donor-card-label">Género</span>
+            <span class="donor-card-value">{{ donor.gender | enumLabel }}</span>
+          </div>
+          @if (isAdmin) {
+            <div class="donor-card-actions">
+              <button class="btn-icon btn-edit" (click)="editDonor(donor.id)" title="Editar">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button class="btn-icon btn-delete" (click)="deleteDonor(donor.id)" title="Eliminar">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="table-footer">
+      <span>Total: {{ donors.length }} donador(es)</span>
+    </div>
+  }
+</div>

@@ -5,6 +5,14 @@ export interface RequestDummy {
   createdAt: Date;
 }
 
+export interface ResponseDummy {
+  id?: number;
+  name: string;
+  description: string;
+  serialNumber: string;
+  createdAt: Date;
+}
+
 export interface Dummy {
   id?: string;
   name: string;
@@ -12,3 +20,4 @@ export interface Dummy {
   serialNumber: string;
   createdAt: Date; //dd-MM-yyyy
 }
+

@@ -26,6 +26,8 @@ public class OrganizerEmpServiceImpl implements OrganizerEmpService {
     private ResponseOrganizerEmpDTO EntityToDTO(OrganizerEmpEntity entity) {
         try {
             ResponseOrganizerEmpDTO dto = new ResponseOrganizerEmpDTO();
+
+            dto.setId(entity.getId());
             dto.setFullName(entity.getFullName());
             dto.setDocument(entity.getDocument());
             dto.setDirection(entity.getDirection());

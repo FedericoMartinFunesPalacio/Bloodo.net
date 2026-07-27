@@ -1,22 +1,7 @@
-version: '3.8'
 services:
-  app-service:
-    build:
-      context: ./backend/app-service
-      dockerfile: Dockerfile
-    ports:
-      - "8081:8081"
-    environment:
-      - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/bloodonet?useSSL=false&serverTimezone=UTC
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
-    networks:
-      - backend-net
-
   mysql:
     image: mysql:8.0
-    container_name: mysql
+    container_name: bloodonet-mysql
     restart: always
     environment:
       MYSQL_DATABASE: bloodonet
@@ -27,17 +12,31 @@ services:
       - db_data:/var/lib/mysql
     networks:
       - backend-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
-  api-gateway:
+  app-service:
     build:
-      context: ./backend/api-gateway
+      context: ./backend/app-service
       dockerfile: Dockerfile
+    container_name: bloodonet-backend
+    restart: always
     ports:
-      - "8080:8080"
+      - "8081:8081"
+    env_file:
+      - ./backend/app-service/.env
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/bloodonet?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
     depends_on:
-      - app-service
+      mysql:
+        condition: service_healthy
     networks:
       - backend-net
 
@@ -45,10 +44,12 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    container_name: bloodonet-frontend
+    restart: always
     ports:
       - "80:80"
     depends_on:
-      - api-gateway
+      - app-service
     networks:
       - backend-net
 
@@ -58,4 +59,3 @@ networks:
 
 volumes:
   db_data:
-

@@ -1,5 +1,9 @@
 package com.FedericoFunes.app_service.services;
 
+import com.FedericoFunes.app_service.dtos.campaigns.BloodTypeRankingDTO;
+import com.FedericoFunes.app_service.dtos.donor.BloodTypePercentageDTO;
+import com.FedericoFunes.app_service.dtos.donor.DonorHealthDTO;
+import com.FedericoFunes.app_service.dtos.donor.DonorStatsDTO;
 import com.FedericoFunes.app_service.dtos.donor.RequestDonorDTO;
 import com.FedericoFunes.app_service.dtos.donor.ResponseDonorDTO;
 import org.springframework.stereotype.Service;
@@ -16,5 +20,10 @@ public interface DonorService {
     ResponseDonorDTO DeleteDonor(Long id);
 
     //OTROS
+    List<BloodTypeRankingDTO> GetBloodTypeRanking();
+    List<BloodTypePercentageDTO> GetBloodTypePercentage();
 
+    //METRICS
+    DonorStatsDTO GetDonorStats(Long donorId);
+    DonorHealthDTO GetDonorHealth(Long donorId);
 }

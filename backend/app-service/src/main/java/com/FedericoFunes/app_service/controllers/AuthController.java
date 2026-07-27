@@ -1,6 +1,7 @@
 package com.FedericoFunes.app_service.controllers;
 
 import com.FedericoFunes.app_service.dtos.users.RequestUsersDTO;
+import com.FedericoFunes.app_service.dtos.users.ResetPasswordDTO;
 import com.FedericoFunes.app_service.dtos.users.ResponseUsersDTO;
 import com.FedericoFunes.app_service.entities.UsersEntity;
 import com.FedericoFunes.app_service.repositories.UsersRepository;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -38,6 +40,24 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Pedido de reseteo de contraseña",
+            description = "Envía el código para resetear la contraseña al email del usuario.")
+    @ApiResponse(responseCode = "200", description = "Código enviado exitosamente.")
+    @PostMapping("/reset-request")
+    public ResponseEntity<String> resetPassword(@RequestBody String email) {
+        String response = usersService.resetPasswordFirstStep(email);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Resetear contraseña",
+            description = "Resetea la contraseña del usuario")
+    @ApiResponse(responseCode = "200", description = "Contraseña reseteada exitosamente.")
+    @PostMapping("/reset-password")
+    public ResponseEntity<Boolean> resetPassword(@RequestBody ResetPasswordDTO dto) {
+        Boolean response = usersService.resetPasswordSecondStep(dto);
+        return ResponseEntity.ok(response);
+    }
+
     @Operation(summary = "Login de usuario",
             description = "Valida las credenciales y devuelve un JWT para acceder a los endpoints protegidos.")
     @ApiResponse(responseCode = "200", description = "Login exitoso, se devuelve el token JWT.")
@@ -58,6 +78,10 @@ public class AuthController {
         Map<String, String> response = new HashMap<>();
         response.put("token", jwt);
         response.put("id", userDetails.getId().toString());
+        response.put("role", userDetails.getRole().toString());
+        response.put("roleId", userDetails.getRoleId().toString());
+        response.put("email", userDetails.getEmail());
+        response.put("phone", userDetails.getPhone());
         return ResponseEntity.ok(response);
     }
 }

@@ -2,6 +2,7 @@ package com.FedericoFunes.app_service.dtos.users;
 
 import com.FedericoFunes.app_service.entities.enums.Roles;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -35,4 +36,9 @@ public class RequestUsersDTO {
     @NotBlank
     @NotNull
     private Roles role;
+
+    @NotBlank
+    @NotNull
+    @JsonProperty("role_id")
+    private Long roleId;
 }

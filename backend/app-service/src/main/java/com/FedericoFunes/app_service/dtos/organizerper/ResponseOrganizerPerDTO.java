@@ -18,6 +18,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class ResponseOrganizerPerDTO {
+    @NotBlank
+    @NotNull
+    private Long id;
+
     @JsonProperty("first_name")
     @NotBlank
     @NotNull

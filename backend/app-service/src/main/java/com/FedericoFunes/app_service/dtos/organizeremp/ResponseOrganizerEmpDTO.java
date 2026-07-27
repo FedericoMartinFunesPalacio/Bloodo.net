@@ -14,6 +14,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ResponseOrganizerEmpDTO {
+    @NotBlank
+    @NotNull
+    private Long id;
+
     @JsonProperty("full_name")
     @NotBlank
     @NotNull

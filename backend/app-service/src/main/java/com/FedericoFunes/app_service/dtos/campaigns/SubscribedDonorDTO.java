@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SubscribedDonorDTO {
+    @JsonProperty("id")
+    private Long id;
+    
     @JsonProperty("first_name")
     private String firstName;
 
@@ -20,6 +23,9 @@ public class SubscribedDonorDTO {
     private String email;
 
     private String document;
+
+    @JsonProperty("phone_number")
+    private String phoneNumber;
 
     @JsonProperty("blood_group")
     private BloodGroup bloodGroup;

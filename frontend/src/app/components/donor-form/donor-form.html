@@ -1,0 +1,183 @@
+<div class="donor-form-container">
+  <div class="donor-form-header">
+    <h1>@if (isEditMode) { Editar Donador } @else { Registrar Donador }</h1>
+  </div>
+
+  @if (loading) {
+    <app-loading></app-loading>
+  } @else {
+    <form (ngSubmit)="onSubmit()" class="donor-form">
+      <div class="form-section">
+        <h3>Datos Personales</h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">Nombre *</label>
+            <input
+              type="text"
+              id="firstName"
+              [(ngModel)]="form.firstName"
+              name="firstName"
+              placeholder="Ej: Juan"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="lastName">Apellido *</label>
+            <input
+              type="text"
+              id="lastName"
+              [(ngModel)]="form.lastName"
+              name="lastName"
+              placeholder="Ej: Pérez"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="birthdate">Fecha de Nacimiento *</label>
+            <input
+              type="date"
+              id="birthdate"
+              [(ngModel)]="form.birthdate"
+              name="birthdate"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="document">Documento *</label>
+            <input
+              type="text"
+              id="document"
+              [(ngModel)]="form.document"
+              name="document"
+              placeholder="Ej: 12345678"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="gender">Género *</label>
+            <select
+              id="gender"
+              [(ngModel)]="form.gender"
+              name="gender"
+              required
+            >
+              @for (g of genders; track g) {
+                <option [value]="g">{{ g | enumLabel }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input
+              type="email"
+              id="email"
+              [(ngModel)]="form.email"
+              name="email"
+              placeholder="Ej: juan@email.com"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="phoneNumber">Teléfono *</label>
+          <input
+            type="text"
+            id="phoneNumber"
+            [(ngModel)]="form.phoneNumber"
+            name="phoneNumber"
+            placeholder="Ej: 11-1234-5678"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Datos Médicos</h3>
+
+        @if (!isEditMode) {
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bloodGroup">Grupo Sanguíneo *</label>
+              <select
+                id="bloodGroup"
+                [(ngModel)]="form.bloodGroup"
+                name="bloodGroup"
+                required
+              >
+                @for (group of bloodGroups; track group) {
+                  <option [value]="group">{{ group | enumLabel }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="bloodFactor">Factor RH *</label>
+              <select
+                id="bloodFactor"
+                [(ngModel)]="form.bloodFactor"
+                name="bloodFactor"
+                required
+              >
+                @for (factor of bloodFactors; track factor) {
+                  <option [value]="factor">{{ factor | enumLabel }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        }
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="height">Altura (metros) *</label>
+            <input
+              type="number"
+              id="height"
+              [(ngModel)]="form.height"
+              name="height"
+              step="0.01"
+              min="0.5"
+              max="2.5"
+              placeholder="Ej: 1.75"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="weight">Peso (kg) *</label>
+            <input
+              type="number"
+              id="weight"
+              [(ngModel)]="form.weight"
+              name="weight"
+              step="0.1"
+              min="30"
+              max="200"
+              placeholder="Ej: 70.5"
+              required
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">
+          @if (isEditMode) { Actualizar Donador } @else { Registrar Donador }
+        </button>
+        <button type="button" class="btn-secondary" (click)="onCancel()">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  }
+</div>

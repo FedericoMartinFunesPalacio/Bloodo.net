@@ -40,8 +40,7 @@ public class OrganizerPerController {
     @Operation(summary = "Crear un nuevo organizador personal",
             description = "Registra un nuevo organizador personal en el sistema a partir de los datos proporcionados. La latitud y longitud se obtienen automáticamente.")
     @ApiResponse(responseCode = "200", description = "Organizador personal creado exitosamente.")
-    @PreAuthorize("hasAnyRole('ADMIN','ORGANIZER')")
-    @PostMapping("/")
+    @PostMapping("/auth")
     public ResponseEntity<ResponseOrganizerPerDTO> CreateOrganizerPer(@RequestBody RequestOrganizerPerDTO organizerPer) {
         return ResponseEntity.ok(organizerPerService.CreateOrganizerPer(organizerPer));
     }

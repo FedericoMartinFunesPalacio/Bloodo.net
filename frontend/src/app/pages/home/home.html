@@ -1,0 +1,131 @@
+<div class="home-container">
+  <header class="home-header">
+    <h1>Bienvenido, {{ username }}</h1>
+    <p class="subtitle">
+      @if (isAdmin) { Panel de administración }
+      @else if (isOrganizer) { Tu espacio de organizador }
+      @else { Portal de donador }
+    </p>
+  </header>
+
+  @if (bloodTotal) {
+    <section class="hero-metrics">
+      <div class="hero-card blood" id="tour-hero-blood">
+        <span class="hero-icon"><mat-icon>bloodtype</mat-icon></span>
+        <div class="hero-content">
+          <span class="hero-value">{{ bloodTotal.estimatedLiters }} LTs</span>
+          <span class="hero-label">de sangre ayudamos a recolectar</span>
+          @if (currentBloodType) {
+            <span class="hero-carousel">
+              de la cual <strong>{{ currentBloodType.percentage }}%</strong> es <strong>{{ currentBloodType.bloodType | enumLabel }}</strong>
+            </span>
+          }
+        </div>
+      </div>
+    </section>
+  }
+
+  @if (livesTotal) {
+    <section class="hero-metrics">
+      <div class="hero-card lives" id="tour-hero-lives">
+        <span class="hero-icon"><mat-icon>favorite</mat-icon></span>
+        <div class="hero-content">
+          <span class="hero-value">{{ livesTotal.estimatedLivesSaved }}</span>
+          <span class="hero-label">vidas logramos salvar</span>
+        </div>
+      </div>
+    </section>
+  }
+
+  @if (loading) {
+    <app-loading message="Cargando dashboard..."></app-loading>
+  } @else {
+    <section class="stats-section" id="tour-stats">
+      <div class="stats-grid">
+        @for (stat of stats; track stat.label) {
+          <div class="stat-card">
+            <span class="stat-icon"><mat-icon>{{ stat.icon }}</mat-icon></span>
+            <span class="stat-value">{{ stat.value }}</span>
+            <span class="stat-label">{{ stat.label }}</span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="content-grid">
+        <div class="recent-campaigns" id="tour-recent-campaigns">
+          <h2>
+            @if (isAdmin) { Campañas Recientes }
+            @else if (isOrganizer) { Mis Campañas Activas }
+            @else { Campañas Disponibles }
+          </h2>
+
+          @if (recentCampaigns.length === 0) {
+            <div class="empty-state">
+              <p>No hay campañas para mostrar</p>
+            </div>
+          } @else {
+            <div class="campaign-list">
+              @for (campaign of recentCampaigns; track campaign.id) {
+                <a class="campaign-item" [routerLink]="['/campaigns', campaign.id]">
+                  <div class="campaign-info">
+                    <span class="campaign-title">{{ campaign.title }}</span>
+                    <span class="campaign-date">{{ campaign.startDate }} - {{ campaign.startTime }}h</span>
+                  </div>
+                  <span class="campaign-direction">{{ campaign.direction }}</span>
+                </a>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="quick-actions" id="tour-quick-actions">
+          <h2>Acciones Rápidas</h2>
+          <div class="actions-grid">
+            @if (isAdmin) {
+              <a routerLink="/campaigns" class="action-card">
+                <span class="action-icon"><mat-icon>list_alt</mat-icon></span>
+                <span class="action-label">Ver Campañas</span>
+              </a>
+              <a routerLink="/donors" class="action-card">
+                <span class="action-icon"><mat-icon>bloodtype</mat-icon></span>
+                <span class="action-label">Ver Donadores</span>
+              </a>
+              <a routerLink="/organizers" class="action-card">
+                <span class="action-icon"><mat-icon>business</mat-icon></span>
+                <span class="action-label">Ver Organizadores</span>
+              </a>
+              <a routerLink="/campaigns/new" class="action-card highlight">
+                <span class="action-icon"><mat-icon>add</mat-icon></span>
+                <span class="action-label">Nueva Campaña</span>
+              </a>
+            }
+
+            @if (isOrganizer) {
+              <a routerLink="/campaigns" class="action-card">
+                <span class="action-icon"><mat-icon>list_alt</mat-icon></span>
+                <span class="action-label">Ver Campañas</span>
+              </a>
+              <a routerLink="/campaigns/new" class="action-card highlight">
+                <span class="action-icon"><mat-icon>add</mat-icon></span>
+                <span class="action-label">Nueva Campaña</span>
+              </a>
+            }
+
+            @if (isDonor) {
+              <a routerLink="/campaigns" class="action-card highlight">
+                <span class="action-icon"><mat-icon>list_alt</mat-icon></span>
+                <span class="action-label">Explorar Campañas</span>
+              </a>
+              <a routerLink="/donors/new" class="action-card">
+                <span class="action-icon"><mat-icon>edit</mat-icon></span>
+                <span class="action-label">Editar Mi Perfil</span>
+              </a>
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+  }
+</div>

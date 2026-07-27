@@ -1,1 +1,18 @@
-<router-outlet></router-outlet>
+@if (!isLandingPage()) {
+  <app-toast></app-toast>
+}
+<app-confirm-dialog></app-confirm-dialog>
+<app-faq-modal></app-faq-modal>
+
+@if (!isAuthPage()) {
+  <app-navbar></app-navbar>
+}
+
+<main class="app-main">
+  <router-outlet></router-outlet>
+</main>
+
+@if (!isAuthPage()) {
+  <app-shared-footer></app-shared-footer>
+}
+

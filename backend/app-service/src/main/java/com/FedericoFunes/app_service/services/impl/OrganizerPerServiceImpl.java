@@ -26,6 +26,7 @@ public class OrganizerPerServiceImpl implements OrganizerPerService {
     private ResponseOrganizerPerDTO EntityToDTO(OrganizerPerEntity entity) {
         try {
             ResponseOrganizerPerDTO dto = new ResponseOrganizerPerDTO();
+            dto.setId(entity.getId());
             dto.setFirstName(entity.getFirstName());
             dto.setLastName(entity.getLastName());
             dto.setBirthdate(entity.getBirthdate());
@@ -42,7 +43,6 @@ public class OrganizerPerServiceImpl implements OrganizerPerService {
             throw new ResponseStatusException(HttpStatusCode.valueOf(500), "Error mapping OrganizerPerDTO: " + e.getMessage());
         }
     }
-
     private OrganizerPerEntity DTOToEntity(RequestOrganizerPerDTO dto) {
         try {
             OrganizerPerEntity entity = new OrganizerPerEntity();
@@ -67,7 +67,6 @@ public class OrganizerPerServiceImpl implements OrganizerPerService {
             throw new ResponseStatusException(HttpStatusCode.valueOf(500), "Error mapping OrganizerPerEntity: " + e.getMessage());
         }
     }
-
     private Boolean validateOrganizerPer(RequestOrganizerPerDTO dto) {
         if (dto == null) return false;
         if (dto.getFirstName() == null || dto.getFirstName().isBlank()) return false;
@@ -107,9 +106,7 @@ public class OrganizerPerServiceImpl implements OrganizerPerService {
         if (!validateOrganizerPer(dto)) {
             throw new BadRequestException("Invalid or incomplete organizer data");
         }
-        OrganizerPerEntity entity = DTOToEntity(dto);
-        OrganizerPerEntity saved = organizerPerRepository.save(entity);
-        return EntityToDTO(saved);
+        return EntityToDTO(organizerPerRepository.save(DTOToEntity(dto)));
     }
 
     @Override
@@ -137,8 +134,7 @@ public class OrganizerPerServiceImpl implements OrganizerPerService {
         entity.setGender(dto.getGender());
         entity.setEmail(dto.getEmail());
         entity.setPhoneNumber(dto.getPhoneNumber());
-        OrganizerPerEntity updated = organizerPerRepository.save(entity);
-        return EntityToDTO(updated);
+        return EntityToDTO(organizerPerRepository.save(entity));
     }
 
     @Override
@@ -146,8 +142,7 @@ public class OrganizerPerServiceImpl implements OrganizerPerService {
         OrganizerPerEntity entity = organizerPerRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Organizer not found"));
         entity.setIsActive(false);
-        OrganizerPerEntity updated = organizerPerRepository.save(entity);
-        return EntityToDTO(updated);
+        return EntityToDTO(organizerPerRepository.save(entity));
     }
 }
 

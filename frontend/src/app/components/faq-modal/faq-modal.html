@@ -1,0 +1,27 @@
+@if (isOpen) {
+  <div class="faq-overlay" (click)="onBackdropClick($event)">
+    <div class="faq-modal">
+      <div class="faq-header">
+        <h2>Preguntas Frecuentes</h2>
+        <button class="faq-close" (click)="close()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="faq-body">
+        @for (faq of faqs; track faq.question; let i = $index) {
+          <div class="faq-item" [class.open]="faq.open">
+            <button class="faq-question" (click)="toggleFaq(i)">
+              <span>{{ faq.question }}</span>
+              <mat-icon class="faq-chevron" [class.rotated]="faq.open">expand_more</mat-icon>
+            </button>
+            @if (faq.open) {
+              <div class="faq-answer">
+                <p>{{ faq.answer }}</p>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,17 @@
+@if (visible) {
+  <div class="confirm-overlay" (click)="onOverlayClick($event)">
+    <div class="confirm-dialog">
+      <div class="confirm-header">
+        <span class="confirm-icon"><mat-icon>warning</mat-icon></span>
+        <h3>{{ title }}</h3>
+      </div>
+      <div class="confirm-body">
+        <p class="confirm-message">{{ message }}</p>
+      </div>
+      <div class="confirm-actions">
+        <button class="btn-cancel" (click)="cancel()">Cancelar</button>
+        <button class="btn-confirm" (click)="confirm()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+}

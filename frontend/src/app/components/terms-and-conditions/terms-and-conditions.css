@@ -1,0 +1,114 @@
+.terms-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-5);
+}
+
+.terms-header {
+  margin-bottom: var(--space-8);
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-primary);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-4);
+  transition: color var(--transition-fast);
+}
+
+.back-link:hover {
+  color: var(--color-primary-hover);
+}
+
+.back-link mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.terms-header h1 {
+  font-size: var(--font-size-3xl);
+  color: var(--color-text);
+  margin: 0 0 var(--space-2);
+}
+
+.last-updated {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.terms-content {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-sm);
+}
+
+.terms-content section {
+  margin-bottom: var(--space-6);
+}
+
+.terms-content section:last-child {
+  margin-bottom: 0;
+}
+
+.terms-content h2 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  margin: 0 0 var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.terms-content p {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+  margin: 0 0 var(--space-3);
+}
+
+.terms-content p:last-child {
+  margin-bottom: 0;
+}
+
+.terms-content ul {
+  margin: var(--space-2) 0 var(--space-3);
+  padding-left: var(--space-6);
+}
+
+.terms-content li {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--space-2);
+}
+
+.terms-content li:last-child {
+  margin-bottom: 0;
+}
+
+.terms-content strong {
+  color: var(--color-text);
+  font-weight: var(--font-weight-semibold);
+}
+
+@media (max-width: 768px) {
+  .terms-container {
+    padding: var(--space-5) var(--space-4);
+  }
+
+  .terms-header h1 {
+    font-size: var(--font-size-2xl);
+  }
+
+  .terms-content {
+    padding: var(--space-5);
+  }
+}

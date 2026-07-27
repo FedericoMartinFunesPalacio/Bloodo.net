@@ -34,6 +34,9 @@ public class CampaignsEntity {
     
     @Column(name = "end_date")
     private LocalDate endDate;
+
+    @Column(name = "was_notify")
+    private Boolean wasNotify = false;
     
     @Column(nullable = false, name = "start_time")
     private LocalTime startTime;
