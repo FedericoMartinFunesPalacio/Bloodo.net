@@ -8,7 +8,6 @@ import { DonorService } from '../../services/donor.service';
 import { OrganizerEmpService } from '../../services/organizer-emp.service';
 import { OrganizerPerService } from '../../services/organizer-per.service';
 import { RoleService } from '../../services/role.service';
-import { ToastService } from '../../services/toast.service';
 import { MetricsService } from '../../services/metrics.service';
 import { EnumLabelPipe } from '../../pipes/enum-label.pipe';
 import { ResponseCampaign } from '../../models/campaign';
@@ -53,7 +52,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     private organizerEmpService: OrganizerEmpService,
     private organizerPerService: OrganizerPerService,
     private roleService: RoleService,
-    private toast: ToastService,
     private metricsService: MetricsService,
     private ngZone: NgZone
   ) {}
@@ -159,7 +157,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
         this.animateDashboardContent();
       },
       error: () => {
-        this.toast.error('Error al cargar el dashboard');
         this.loading = false;
       }
     });
@@ -187,7 +184,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
           this.animateDashboardContent();
         },
         error: () => {
-          this.toast.error('Error al cargar el dashboard');
           this.loading = false;
         }
       });
@@ -206,7 +202,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
         this.animateDashboardContent();
       },
       error: () => {
-        this.toast.error('Error al cargar el dashboard');
         this.loading = false;
       }
     });

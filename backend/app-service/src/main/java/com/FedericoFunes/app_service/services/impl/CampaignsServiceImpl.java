@@ -50,7 +50,6 @@ public class CampaignsServiceImpl implements CampaignsService {
     private final DonorService donorService;
     private final EmailService emailService;
 
-
     private ResponseCampaignsDTO entityToDTO(CampaignsEntity entity) {
         try {
             ResponseCampaignsDTO dto = new ResponseCampaignsDTO();
@@ -175,7 +174,7 @@ public class CampaignsServiceImpl implements CampaignsService {
         return result;
     }
 
-
+    //ABM
     @Override
     public List<ResponseCampaignsDTO> getAllCampaigns() {
         List<ResponseCampaignsDTO> result = new ArrayList<>();
@@ -253,6 +252,8 @@ public class CampaignsServiceImpl implements CampaignsService {
         return entityToDTO(campaignsRepository.save(entity));
     }
 
+
+    //DONOR
     @Override
     public ResponseCampaignsDTO subscribeDonor(Long campaignId, Long donorId) {
         CampaignsEntity campaign = campaignsRepository.findById(campaignId)
@@ -272,6 +273,45 @@ public class CampaignsServiceImpl implements CampaignsService {
         return entityToDTO(campaignsRepository.save(campaign));
     }
 
+    @Override
+    public List<SubscribedDonorDTO> getSubscribedDonors(Long campaignId) {
+        CampaignsEntity campaign = campaignsRepository.findById(campaignId)
+                .orElseThrow(() -> new NotFoundException("Campaign not found"));
+        if (campaign.getIsActive() == null || !campaign.getIsActive() || campaign.getEndDate() != null) {
+            throw new BadRequestException("Cannot get donors from inactive or finished campaign");
+        }
+        return mapDonorsSuscribeEntityToDTO(campaign);
+    }
+
+    @Override
+    public List<SubscribedDonorDTO> unsubscribeDonor(Long campaignId, Long donorId) {
+        CampaignsEntity campaign = campaignsRepository.findById(campaignId)
+                .orElseThrow(() -> new NotFoundException("Campaign not found"));
+        if (campaign.getIsActive() == null || !campaign.getIsActive()) {
+            throw new BadRequestException("Cannot unsubscribe from inactive campaign");
+        }
+        if (campaign.getEndDate() != null) {
+            throw new BadRequestException("Cannot unsubscribe from finished campaign");
+        }
+        boolean removed = campaign.getSubscribedDonors().removeIf(d -> d.getId() != null && d.getId().equals(donorId));
+        if (!removed) {
+            throw new BadRequestException("Donor is not subscribed to this campaign");
+        }
+        campaignsRepository.save(campaign);
+        return mapDonorsSuscribeEntityToDTO(campaign);
+    }
+
+    @Override
+    public List<ResponseCampaignsDTO> getActiveSubscribedCampaigns(Long donorId) {
+        List<ResponseCampaignsDTO> result = new ArrayList<>();
+        for (CampaignsEntity entity : campaignsRepository.findActiveSubscribedCampaignsByDonor(donorId)) {
+            result.add(entityToDTO(entity));
+        }
+        return result;
+    }
+
+
+    //CAMP
     @Override
     public ResponseCampaignsDTO finishCampaign(Long campaignId, java.time.LocalDate endDate) {
         CampaignsEntity campaign = campaignsRepository.findById(campaignId)
@@ -295,16 +335,6 @@ public class CampaignsServiceImpl implements CampaignsService {
             }
         }
         return result;
-    }
-
-    @Override
-    public List<SubscribedDonorDTO> getSubscribedDonors(Long campaignId) {
-        CampaignsEntity campaign = campaignsRepository.findById(campaignId)
-                .orElseThrow(() -> new NotFoundException("Campaign not found"));
-        if (campaign.getIsActive() == null || !campaign.getIsActive() || campaign.getEndDate() != null) {
-            throw new BadRequestException("Cannot get donors from inactive or finished campaign");
-        }
-        return mapDonorsSuscribeEntityToDTO(campaign);
     }
 
     @Override
@@ -360,24 +390,8 @@ public class CampaignsServiceImpl implements CampaignsService {
         }
     }
 
-    @Override
-    public List<SubscribedDonorDTO> unsubscribeDonor(Long campaignId, Long donorId) {
-        CampaignsEntity campaign = campaignsRepository.findById(campaignId)
-                .orElseThrow(() -> new NotFoundException("Campaign not found"));
-        if (campaign.getIsActive() == null || !campaign.getIsActive()) {
-            throw new BadRequestException("Cannot unsubscribe from inactive campaign");
-        }
-        if (campaign.getEndDate() != null) {
-            throw new BadRequestException("Cannot unsubscribe from finished campaign");
-        }
-        boolean removed = campaign.getSubscribedDonors().removeIf(d -> d.getId() != null && d.getId().equals(donorId));
-        if (!removed) {
-            throw new BadRequestException("Donor is not subscribed to this campaign");
-        }
-        campaignsRepository.save(campaign);
-        return mapDonorsSuscribeEntityToDTO(campaign);
-    }
 
+    //METRICAS
     @Override
     public List<BloodEstimatedDTO> getBloodEstimatedPerCampaign() {
         List<BloodEstimatedDTO> dtos = new ArrayList<>();
@@ -465,6 +479,8 @@ public class CampaignsServiceImpl implements CampaignsService {
         return new TotalLivesSavedDTO(totalSubscribers, totalFinished, totalSubscribers * 3);
     }
 
+
+    //ORG
     @Override
     public List<ResponseCampaignsDTO> getCampaignsByOrganizer(Long organizerId) {
         List<ResponseCampaignsDTO> result = new ArrayList<>();
@@ -544,14 +560,5 @@ public class CampaignsServiceImpl implements CampaignsService {
             ));
         }
         return dtos;
-    }
-
-    @Override
-    public List<ResponseCampaignsDTO> getActiveSubscribedCampaigns(Long donorId) {
-        List<ResponseCampaignsDTO> result = new ArrayList<>();
-        for (CampaignsEntity entity : campaignsRepository.findActiveSubscribedCampaignsByDonor(donorId)) {
-            result.add(entityToDTO(entity));
-        }
-        return result;
     }
 }
