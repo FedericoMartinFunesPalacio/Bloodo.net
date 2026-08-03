@@ -202,10 +202,11 @@ public class DonorControllerTest extends BaseControllerTest {
 
     @Test
     void getDonorStats_shouldReturnStats() throws Exception {
+        when(usersService.getCurrentDonorId()).thenReturn(1L);
         DonorStatsDTO stats = new DonorStatsDTO(5L, 2250.0, 2.25);
         when(donorService.GetDonorStats(1L)).thenReturn(stats);
 
-        mockMvc.perform(get("/api/v1/donors/1/metrics/stats"))
+        mockMvc.perform(get("/api/v1/donors/me/metrics/stats"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.campaigns_attended").value(5))
                 .andExpect(jsonPath("$.estimated_ml").value(2250.0));
@@ -213,18 +214,20 @@ public class DonorControllerTest extends BaseControllerTest {
 
     @Test
     void getDonorStats_shouldReturn404_whenNotFound() throws Exception {
+        when(usersService.getCurrentDonorId()).thenReturn(99L);
         when(donorService.GetDonorStats(99L)).thenThrow(new NotFoundException("Donor not found"));
 
-        mockMvc.perform(get("/api/v1/donors/99/metrics/stats"))
+        mockMvc.perform(get("/api/v1/donors/me/metrics/stats"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void getDonorHealth_shouldReturnHealth() throws Exception {
+        when(usersService.getCurrentDonorId()).thenReturn(1L);
         DonorHealthDTO health = new DonorHealthDTO("A_POSITIVE", "01-06-2025", "01-09-2025", 22.86, 36);
         when(donorService.GetDonorHealth(1L)).thenReturn(health);
 
-        mockMvc.perform(get("/api/v1/donors/1/metrics/health"))
+        mockMvc.perform(get("/api/v1/donors/me/metrics/health"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.blood_type").value("A_POSITIVE"))
                 .andExpect(jsonPath("$.age").value(36));
@@ -232,9 +235,10 @@ public class DonorControllerTest extends BaseControllerTest {
 
     @Test
     void getDonorHealth_shouldReturn404_whenNotFound() throws Exception {
+        when(usersService.getCurrentDonorId()).thenReturn(99L);
         when(donorService.GetDonorHealth(99L)).thenThrow(new NotFoundException("Donor not found"));
 
-        mockMvc.perform(get("/api/v1/donors/99/metrics/health"))
+        mockMvc.perform(get("/api/v1/donors/me/metrics/health"))
                 .andExpect(status().isNotFound());
     }
 

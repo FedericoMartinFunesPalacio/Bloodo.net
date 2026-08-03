@@ -18,6 +18,11 @@ export class AuthService {
   }
 
   private initializeCurrentUser(): void {
+    const token = localStorage.getItem(this.tokenKey);
+    if (!token) {
+      localStorage.removeItem('currentUser');
+      return;
+    }
     const userJson = localStorage.getItem('currentUser');
     if (userJson) {
       try {

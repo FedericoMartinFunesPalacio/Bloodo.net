@@ -9,6 +9,8 @@ import com.FedericoFunes.app_service.services.UsersService;
 import com.FedericoFunes.app_service.services.external.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -132,5 +134,16 @@ public class UsersServiceImpl implements UsersService {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(500), "Error resetting password: " + e.getMessage());
         }
+    }
+
+    @Override
+    public Long getCurrentDonorId() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UsersEntity user = usersRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (user.getRole().toString().equals("ADMIN")) {
+            return null;
+        }
+        return user.getRoleId();
     }
 }

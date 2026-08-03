@@ -1,7 +1,7 @@
 package com.FedericoFunes.app_service.controllers;
 
-import com.FedericoFunes.app_service.repositories.UsersRepository;
 import com.FedericoFunes.app_service.security.JwtUtil;
+import com.FedericoFunes.app_service.services.UsersService;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 public abstract class BaseControllerTest {
@@ -10,5 +10,5 @@ public abstract class BaseControllerTest {
     protected JwtUtil jwtUtil;
 
     @MockBean
-    protected UsersRepository usersRepository;
+    protected UsersService usersService;
 }

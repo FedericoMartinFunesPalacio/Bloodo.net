@@ -11,4 +11,5 @@ public interface UsersService {
     ResponseUsersDTO registerUser(RequestUsersDTO dto);
     String resetPasswordFirstStep(String email);
     Boolean resetPasswordSecondStep(ResetPasswordDTO dto);
+    Long getCurrentDonorId();
 }

@@ -11,6 +11,7 @@ import com.FedericoFunes.app_service.dtos.campaigns.TotalBloodEstimatedDTO;
 import com.FedericoFunes.app_service.dtos.campaigns.TotalLivesSavedDTO;
 import com.FedericoFunes.app_service.dtos.donor.BloodTypePercentageDTO;
 import com.FedericoFunes.app_service.services.CampaignsService;
+import com.FedericoFunes.app_service.services.UsersService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,6 +28,7 @@ import java.util.List;
 @RequestMapping("/api/v1/campaigns")
 public class CampaignsController {
     private final CampaignsService campaignsService;
+    private final UsersService usersService;
 
     @Operation(summary = "Estimación de sangre donada por campaña", description = "Devuelve la cantidad estimada de sangre donada por cada campaña activa y finalizada, calculada como suscriptores × 450 ml.")
     @ApiResponse(responseCode = "200", description = "Métrica obtenida correctamente.")
@@ -119,16 +121,26 @@ public class CampaignsController {
     @Operation(summary = "Suscribir donante a campaña", description = "Agrega un donante a la lista de donantes suscriptos a una campaña activa y no terminada.")
     @ApiResponse(responseCode = "200", description = "Donante suscripto correctamente a la campaña.")
     @PreAuthorize("hasAnyRole('ADMIN','DONOR')")
-    @PostMapping("/{campaignId}/subscribe/{donorId}")
-    public ResponseEntity<ResponseCampaignsDTO> subscribeDonor(@PathVariable Long campaignId, @PathVariable Long donorId) {
+    @PostMapping("/{campaignId}/subscribe")
+    public ResponseEntity<ResponseCampaignsDTO> subscribeDonor(@PathVariable Long campaignId) {
+        Long donorId = usersService.getCurrentDonorId();
+        if (donorId == null) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatusCode.valueOf(400), "ADMIN cannot subscribe to campaigns");
+        }
         return ResponseEntity.ok(campaignsService.subscribeDonor(campaignId, donorId));
     }
 
     @Operation(summary = "Desuscribir donante de campaña", description = "Elimina un donante de la lista de suscriptos a una campaña activa y no terminada. Devuelve la lista actualizada de donantes suscriptos.")
     @ApiResponse(responseCode = "200", description = "Lista de donantes suscriptos actualizada tras la desuscripción.")
     @PreAuthorize("hasAnyRole('ADMIN','DONOR')")
-    @DeleteMapping("/{campaignId}/unsubscribe/{donorId}")
-    public ResponseEntity<List<SubscribedDonorDTO>> unsubscribeDonor(@PathVariable Long campaignId, @PathVariable Long donorId) {
+    @DeleteMapping("/{campaignId}/unsubscribe")
+    public ResponseEntity<List<SubscribedDonorDTO>> unsubscribeDonor(@PathVariable Long campaignId) {
+        Long donorId = usersService.getCurrentDonorId();
+        if (donorId == null) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatusCode.valueOf(400), "ADMIN cannot unsubscribe from campaigns");
+        }
         return ResponseEntity.ok(campaignsService.unsubscribeDonor(campaignId, donorId));
     }
 
@@ -232,8 +244,13 @@ public class CampaignsController {
     @Operation(summary = "Campañas activas suscritas por donador", description = "Devuelve la lista de campañas activas (sin finalizar) a las que un donador está suscrito.")
     @ApiResponse(responseCode = "200", description = "Lista de campañas obtenida correctamente.")
     @PreAuthorize("hasAnyRole('ADMIN','DONOR')")
-    @GetMapping("/subscribed-by/{donorId}")
-    public ResponseEntity<List<ResponseCampaignsDTO>> getActiveSubscribedCampaigns(@PathVariable Long donorId) {
+    @GetMapping("/subscribed-by/me")
+    public ResponseEntity<List<ResponseCampaignsDTO>> getActiveSubscribedCampaigns() {
+        Long donorId = usersService.getCurrentDonorId();
+        if (donorId == null) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatusCode.valueOf(400), "ADMIN has no subscribed campaigns");
+        }
         return ResponseEntity.ok(campaignsService.getActiveSubscribedCampaigns(donorId));
     }
 }
