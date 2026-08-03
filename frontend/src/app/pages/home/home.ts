@@ -14,7 +14,7 @@ import { ResponseCampaign } from '../../models/campaign';
 import { TotalBloodEstimated, TotalLivesSaved, BloodTypePercentage } from '../../models/metrics';
 import { animate, stagger } from 'animejs';
 import { MatIcon } from '@angular/material/icon';
-import { LoadingComponent } from '../../components/loading/loading';
+import { LoadingComponent } from '../../components/reusable/loading/loading';
 
 interface StatCard {
   label: string;

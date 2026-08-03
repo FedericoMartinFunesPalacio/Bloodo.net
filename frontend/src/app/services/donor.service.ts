@@ -53,15 +53,15 @@ export class DonorService {
       .pipe(map(data => mapDonorFromApi(data) as ResponseDonor));
   }
 
-  getDonorStats(id: number): Observable<DonorStats> {
+  getDonorStats(): Observable<DonorStats> {
     const headers = this.authService.getAuthHeaders();
-    return this.http.get<Record<string, any>>(`${this.baseUrl}/${id}/metrics/stats`, { headers })
+    return this.http.get<Record<string, any>>(`${this.baseUrl}/me/metrics/stats`, { headers })
       .pipe(map(data => mapFromApi(data) as unknown as DonorStats));
   }
 
-  getDonorHealth(id: number): Observable<DonorHealth> {
+  getDonorHealth(): Observable<DonorHealth> {
     const headers = this.authService.getAuthHeaders();
-    return this.http.get<Record<string, any>>(`${this.baseUrl}/${id}/metrics/health`, { headers })
+    return this.http.get<Record<string, any>>(`${this.baseUrl}/me/metrics/health`, { headers })
       .pipe(map(data => {
         const mapped = mapFromApi(data);
         if (mapped['lastDonationDate'] === 'null') mapped['lastDonationDate'] = null;

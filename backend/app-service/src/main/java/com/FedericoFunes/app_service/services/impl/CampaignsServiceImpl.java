@@ -15,6 +15,7 @@ import com.FedericoFunes.app_service.handlers.BadRequestException;
 import com.FedericoFunes.app_service.handlers.NotFoundException;
 import com.FedericoFunes.app_service.repositories.CampaignsRepository;
 import com.FedericoFunes.app_service.services.CampaignsService;
+import com.FedericoFunes.app_service.services.NotificationService;
 import com.FedericoFunes.app_service.services.external.EmailService;
 import com.FedericoFunes.app_service.services.external.GoogleMapsService;
 import com.FedericoFunes.app_service.services.DonorService;
@@ -27,6 +28,8 @@ import com.FedericoFunes.app_service.entities.DonorEntity;
 import com.FedericoFunes.app_service.entities.OrganizerEmpEntity;
 import com.FedericoFunes.app_service.entities.OrganizerPerEntity;
 import com.FedericoFunes.app_service.dtos.campaigns.SubscribedDonorDTO;
+import com.FedericoFunes.app_service.entities.UsersEntity;
+import com.FedericoFunes.app_service.repositories.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.scheduling.annotation.Async;
@@ -49,6 +52,8 @@ public class CampaignsServiceImpl implements CampaignsService {
     private final GoogleMapsService googleMapsService;
     private final DonorService donorService;
     private final EmailService emailService;
+    private final NotificationService notificationService;
+    private final UsersRepository usersRepository;
 
     private ResponseCampaignsDTO entityToDTO(CampaignsEntity entity) {
         try {
@@ -204,6 +209,18 @@ public class CampaignsServiceImpl implements CampaignsService {
 
         emailService.notifyCreateCampaign(savedCampaing, donorService.GetAllDonors());
 
+        for (ResponseDonorDTO donor : donorService.GetAllDonors()) {
+            if (donor.getIsActive()) {
+                usersRepository.findByRoleId(donor.getId()).ifPresent(user ->
+                    notificationService.createNotification(
+                        user.getId(),
+                        "Nueva campaña disponible",
+                        "Se creó la campaña \"" + savedCampaing.getTitle() + "\". ¡Revisala y suscribite!"
+                    )
+                );
+            }
+        }
+
         return savedCampaing;
     }
 
@@ -238,6 +255,16 @@ public class CampaignsServiceImpl implements CampaignsService {
         ResponseCampaignsDTO savedCampaing = entityToDTO(campaignsRepository.save(entity));
 
         emailService.notifyUpdateCampaign(savedCampaing, entity.getSubscribedDonors());
+
+        for (DonorEntity donor : entity.getSubscribedDonors()) {
+            usersRepository.findByRoleId(donor.getId()).ifPresent(user ->
+                notificationService.createNotification(
+                    user.getId(),
+                    "Campaña actualizada",
+                    "La campaña \"" + savedCampaing.getTitle() + "\" fue actualizada. Revisá los cambios."
+                )
+            );
+        }
 
         return savedCampaing;
     }
@@ -381,6 +408,16 @@ public class CampaignsServiceImpl implements CampaignsService {
                             "</body>\n" +
                             "</html>\n";
                     emailService.sendBulkHtmlEmail(donorEmails, subject, bodyHtml);
+
+                    for (DonorEntity donor : campaign.getSubscribedDonors()) {
+                        usersRepository.findByRoleId(donor.getId()).ifPresent(user ->
+                            notificationService.createNotification(
+                                user.getId(),
+                                "Campaña próxima a comenzar",
+                                "La campaña \"" + campaign.getTitle() + "\" comienza el " + campaign.getStartDate() + ". ¡No te olvides de ir!"
+                            )
+                        );
+                    }
                 }
             }
 

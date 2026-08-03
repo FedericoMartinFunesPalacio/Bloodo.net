@@ -139,25 +139,28 @@ public class CampaignsControllerTest extends BaseControllerTest {
 
     @Test
     void subscribeDonor_shouldReturnCampaign() throws Exception {
+        when(usersService.getCurrentDonorId()).thenReturn(10L);
         ResponseCampaignsDTO resp = buildCampaign(1L, "Campaña A");
         when(campaignsService.subscribeDonor(1L, 10L)).thenReturn(resp);
 
-        mockMvc.perform(post("/api/v1/campaigns/1/subscribe/10"))
+        mockMvc.perform(post("/api/v1/campaigns/1/subscribe"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Campaña A"));
     }
 
     @Test
     void subscribeDonor_shouldReturn404_whenNotFound() throws Exception {
+        when(usersService.getCurrentDonorId()).thenReturn(10L);
         when(campaignsService.subscribeDonor(99L, 10L))
                 .thenThrow(new NotFoundException("Campaign not found"));
 
-        mockMvc.perform(post("/api/v1/campaigns/99/subscribe/10"))
+        mockMvc.perform(post("/api/v1/campaigns/99/subscribe"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void unsubscribeDonor_shouldReturnList() throws Exception {
+        when(usersService.getCurrentDonorId()).thenReturn(10L);
         SubscribedDonorDTO donor = new SubscribedDonorDTO();
         donor.setId(10L); donor.setFirstName("Juan"); donor.setLastName("Pérez");
         donor.setEmail("juan@test.com"); donor.setDocument("12345678");
@@ -166,7 +169,7 @@ public class CampaignsControllerTest extends BaseControllerTest {
 
         when(campaignsService.unsubscribeDonor(1L, 10L)).thenReturn(List.of(donor));
 
-        mockMvc.perform(delete("/api/v1/campaigns/1/unsubscribe/10"))
+        mockMvc.perform(delete("/api/v1/campaigns/1/unsubscribe"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", org.hamcrest.Matchers.hasSize(1)))
                 .andExpect(jsonPath("$[0].first_name").value("Juan"));
@@ -211,10 +214,11 @@ public class CampaignsControllerTest extends BaseControllerTest {
 
     @Test
     void getActiveSubscribedCampaigns_shouldReturnList() throws Exception {
+        when(usersService.getCurrentDonorId()).thenReturn(10L);
         when(campaignsService.getActiveSubscribedCampaigns(10L))
                 .thenReturn(List.of(buildCampaign(1L, "Active Campaign")));
 
-        mockMvc.perform(get("/api/v1/campaigns/subscribed-by/10"))
+        mockMvc.perform(get("/api/v1/campaigns/subscribed-by/me"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("Active Campaign"));
     }

@@ -14,6 +14,7 @@ import com.FedericoFunes.app_service.entities.enums.Gender;
 import com.FedericoFunes.app_service.handlers.BadRequestException;
 import com.FedericoFunes.app_service.handlers.NotFoundException;
 import com.FedericoFunes.app_service.repositories.CampaignsRepository;
+import com.FedericoFunes.app_service.repositories.UsersRepository;
 import com.FedericoFunes.app_service.services.external.EmailService;
 import com.FedericoFunes.app_service.services.external.GoogleMapsService;
 import com.FedericoFunes.app_service.services.impl.CampaignsServiceImpl;
@@ -43,6 +44,8 @@ public class CampaignsServiceImplTest {
     @Mock private GoogleMapsService googleMapsService;
     @Mock private DonorService donorService;
     @Mock private EmailService emailService;
+    @Mock private NotificationService notificationService;
+    @Mock private UsersRepository usersRepository;
 
     @InjectMocks
     private CampaignsServiceImpl campaignsService;

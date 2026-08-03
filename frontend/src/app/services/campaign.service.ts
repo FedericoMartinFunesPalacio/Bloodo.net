@@ -51,19 +51,19 @@ export class CampaignService {
       .pipe(map(data => mapCampaignFromApi(data) as ResponseCampaign));
   }
 
-  subscribeDonor(campaignId: number, donorId: number): Observable<ResponseCampaign> {
+  subscribeDonor(campaignId: number): Observable<ResponseCampaign> {
     const headers = this.authService.getAuthHeaders();
     return this.http.post<Record<string, any>>(
-      `${this.baseUrl}/${campaignId}/subscribe/${donorId}`,
+      `${this.baseUrl}/${campaignId}/subscribe`,
       {},
       { headers }
     ).pipe(map(data => mapCampaignFromApi(data) as ResponseCampaign));
   }
 
-  unsubscribeDonor(campaignId: number, donorId: number): Observable<SubscribedDonor[]> {
+  unsubscribeDonor(campaignId: number): Observable<SubscribedDonor[]> {
     const headers = this.authService.getAuthHeaders();
     return this.http.delete<Record<string, any>[]>(
-      `${this.baseUrl}/${campaignId}/unsubscribe/${donorId}`,
+      `${this.baseUrl}/${campaignId}/unsubscribe`,
       { headers }
     ).pipe(map(data => data as SubscribedDonor[]));
   }
@@ -100,15 +100,15 @@ export class CampaignService {
       .pipe(map(data => mapCampaignArrayFromApi(data) as ResponseCampaign[]));
   }
 
-  getActiveSubscribedCampaigns(donorId: number): Observable<ResponseCampaign[]> {
+  getActiveSubscribedCampaigns(): Observable<ResponseCampaign[]> {
     const headers = this.authService.getAuthHeaders();
-    return this.http.get<Record<string, any>[]>(`${this.baseUrl}/subscribed-by/${donorId}`, { headers })
+    return this.http.get<Record<string, any>[]>(`${this.baseUrl}/subscribed-by/me`, { headers })
       .pipe(map(data => mapCampaignArrayFromApi(data) as ResponseCampaign[]));
   }
 
-  unsubscribeFromCampaign(campaignId: number, donorId: number): Observable<any> {
+  unsubscribeFromCampaign(campaignId: number): Observable<any> {
     const headers = this.authService.getAuthHeaders();
-    return this.http.delete(`${this.baseUrl}/${campaignId}/unsubscribe/${donorId}`, { headers });
+    return this.http.delete(`${this.baseUrl}/${campaignId}/unsubscribe`, { headers });
   }
 
   getOrganizerBloodTotal(organizerId: number): Observable<TotalBloodEstimated> {

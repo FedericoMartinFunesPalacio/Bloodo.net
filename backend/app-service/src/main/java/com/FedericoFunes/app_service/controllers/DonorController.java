@@ -7,12 +7,14 @@ import com.FedericoFunes.app_service.dtos.donor.DonorStatsDTO;
 import com.FedericoFunes.app_service.dtos.donor.RequestDonorDTO;
 import com.FedericoFunes.app_service.dtos.donor.ResponseDonorDTO;
 import com.FedericoFunes.app_service.services.DonorService;
+import com.FedericoFunes.app_service.services.UsersService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -22,6 +24,7 @@ import java.util.List;
 @RequestMapping("/api/v1/donors")
 public class DonorController {
     private final DonorService donorService;
+    private final UsersService usersService;
 
     @Operation(summary = "Ranking global de tipos de sangre", description = "Devuelve el conteo de donadores por tipo de sangre (grupo + factor) en toda la aplicación, ordenado de mayor a menor.")
     @ApiResponse(responseCode = "200", description = "Ranking obtenido correctamente.")
@@ -87,17 +90,27 @@ public class DonorController {
             description = "Devuelve estadísticas de donaciones: campañas asistidas, sangre estimada donada.")
     @ApiResponse(responseCode = "200", description = "Métricas obtenidas correctamente.")
     @PreAuthorize("hasAnyRole('ADMIN','DONOR')")
-    @GetMapping("/{id}/metrics/stats")
-    public ResponseEntity<DonorStatsDTO> GetDonorStats(@PathVariable Long id) {
-        return ResponseEntity.ok(donorService.GetDonorStats(id));
+    @GetMapping("/me/metrics/stats")
+    public ResponseEntity<DonorStatsDTO> GetDonorStats() {
+        Long donorId = usersService.getCurrentDonorId();
+        if (donorId == null) {
+            throw new ResponseStatusException(
+                    org.springframework.http.HttpStatusCode.valueOf(400), "ADMIN has no donor stats");
+        }
+        return ResponseEntity.ok(donorService.GetDonorStats(donorId));
     }
 
     @Operation(summary = "Información de salud del donador",
             description = "Devuelve información de salud: tipo de sangre, IMC, edad, última donación, próxima fecha elegible.")
     @ApiResponse(responseCode = "200", description = "Información de salud obtenida correctamente.")
     @PreAuthorize("hasAnyRole('ADMIN','DONOR')")
-    @GetMapping("/{id}/metrics/health")
-    public ResponseEntity<DonorHealthDTO> GetDonorHealth(@PathVariable Long id) {
-        return ResponseEntity.ok(donorService.GetDonorHealth(id));
+    @GetMapping("/me/metrics/health")
+    public ResponseEntity<DonorHealthDTO> GetDonorHealth() {
+        Long donorId = usersService.getCurrentDonorId();
+        if (donorId == null) {
+            throw new ResponseStatusException(
+                    org.springframework.http.HttpStatusCode.valueOf(400), "ADMIN has no donor health info");
+        }
+        return ResponseEntity.ok(donorService.GetDonorHealth(donorId));
     }
 }

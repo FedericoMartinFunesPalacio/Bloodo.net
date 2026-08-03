@@ -6,6 +6,7 @@ import com.FedericoFunes.app_service.dtos.users.ResponseUsersDTO;
 import com.FedericoFunes.app_service.entities.UsersEntity;
 import com.FedericoFunes.app_service.entities.enums.Roles;
 import com.FedericoFunes.app_service.handlers.BadRequestException;
+import com.FedericoFunes.app_service.repositories.UsersRepository;
 import com.FedericoFunes.app_service.services.UsersService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ public class AuthControllerTest extends BaseControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private UsersService usersService;
+    private UsersRepository usersRepository;
 
     @MockBean
     private AuthenticationManager authenticationManager;
