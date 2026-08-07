@@ -19,8 +19,23 @@ export function isValidBirthdate(dateStr: string): boolean {
   if (!dateStr) return false;
   const parts = dateStr.split('-');
   if (parts.length !== 3) return false;
-  const year = parseInt(parts[0], 10);
-  return year >= 1930 && year <= new Date().getFullYear();
+  let year: number, month: number, day: number;
+  if (parts[0].length === 4) {
+    year = parseInt(parts[0], 10);
+    month = parseInt(parts[1], 10);
+    day = parseInt(parts[2], 10);
+  } else {
+    day = parseInt(parts[0], 10);
+    month = parseInt(parts[1], 10);
+    year = parseInt(parts[2], 10);
+  }
+  if (year < 1930 || year > new Date().getFullYear()) return false;
+  const today = new Date();
+  let age = today.getFullYear() - year;
+  if (today.getMonth() + 1 < month || (today.getMonth() + 1 === month && today.getDate() < day)) {
+    age--;
+  }
+  return age >= 18;
 }
 
 export function isFutureDate(dateStr: string): boolean {

@@ -35,6 +35,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   isOrganizer = false;
   loading = true;
   username = '';
+  editProfileUrl: string | null = null;
 
   stats: StatCard[] = [];
   recentCampaigns: ResponseCampaign[] = [];
@@ -59,6 +60,9 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     this.authService.getCurrentUser().subscribe(user => {
       this.username = user?.username || '';
+      if (user?.roleId) {
+        this.editProfileUrl = `/donors/${user.roleId}/edit`;
+      }
     });
 
     this.roleService.isAdmin().subscribe(v => this.isAdmin = v);
@@ -195,7 +199,16 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
       next: (campaigns) => {
         this.stats = [
           { label: 'Campañas Disponibles', value: campaigns.length, icon: 'list_alt' },
-          { label: 'Campañas Próximas', value: campaigns.filter(c => c.startDate).length, icon: 'event' }
+          { label: 'Campañas Próximas', value: campaigns.filter(c => {
+              if (!c.startDate) return false;
+              const parts = c.startDate.split('-');
+              const start = new Date(+parts[2], +parts[1] - 1, +parts[0]);
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
+              const diff = start.getTime() - today.getTime();
+              const days = diff / (1000 * 60 * 60 * 24);
+              return days >= 0 && days <= 6;
+            }).length, icon: 'event' }
         ];
         this.recentCampaigns = campaigns.slice(0, 5);
         this.loading = false;

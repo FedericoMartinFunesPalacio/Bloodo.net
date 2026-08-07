@@ -10,6 +10,7 @@ import { BloodFactor, BloodGroup, Gender } from '../../../models/donor';
 import {RequestUser} from '../../../models/user';
 import {AuthService} from '../../../services/auth.service';
 import { isValidEmail, isValidPhone, isValidDocument, isValidBirthdate } from '../../../utils/validators';
+import { toISODate } from '../../../utils/date-utils';
 import { LoadingComponent } from '../../reusable/loading/loading';
 
 @Component({
@@ -73,7 +74,7 @@ export class DonorFormComponent implements OnInit {
         this.form = {
           firstName: donor.firstName,
           lastName: donor.lastName,
-          birthdate: donor.birthdate,
+          birthdate: toISODate(donor.birthdate),
           document: donor.document,
           bloodFactor: donor.bloodFactor,
           bloodGroup: donor.bloodGroup,
@@ -168,7 +169,7 @@ export class DonorFormComponent implements OnInit {
       return false;
     }
     if (!isValidBirthdate(this.form.birthdate)) {
-      this.toast.warning('La fecha de nacimiento debe ser desde 1930');
+      this.toast.warning('Debés tener al menos 18 años para registrarte');
       return false;
     }
     if (!this.form.document.trim()) {
@@ -213,7 +214,7 @@ export class DonorFormComponent implements OnInit {
           if (user?.role === 'ADMIN') {
             this.router.navigate(['/donors']);
           } else {
-            this.router.navigate(['/campaigns']);
+            this.router.navigate(['/home']);
           }
       }});
     } else {

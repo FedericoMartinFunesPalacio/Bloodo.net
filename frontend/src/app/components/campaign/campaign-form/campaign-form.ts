@@ -9,6 +9,7 @@ import { EnumLabelPipe } from '../../../pipes/enum-label.pipe';
 import { RequestCampaign, ResponseCampaign } from '../../../models/campaign';
 import { BloodFactor, BloodGroup } from '../../../models/donor';
 import { isFutureDate } from '../../../utils/validators';
+import { toISODate } from '../../../utils/date-utils';
 import { LoadingComponent } from '../../reusable/loading/loading';
 
 @Component({
@@ -68,7 +69,7 @@ export class CampaignFormComponent implements OnInit {
         this.form = {
           title: campaign.title,
           description: campaign.description,
-          startDate: campaign.startDate,
+          startDate: toISODate(campaign.startDate),
           endDate: campaign.endDate || '',
           startTime: campaign.startTime,
           direction: campaign.direction,

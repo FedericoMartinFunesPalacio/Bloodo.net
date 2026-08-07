@@ -41,3 +41,12 @@ export function parseDateFromDDMMYYYY(value: string | Date | undefined | null): 
   return d;
 }
 
+export function toISODate(ddmmyyyy: string): string {
+  if (!ddmmyyyy) return '';
+  const parts = ddmmyyyy.split('-');
+  if (parts.length === 3 && parts[0].length === 2) {
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  }
+  return ddmmyyyy;
+}
+

@@ -12,6 +12,7 @@ import { Gender } from '../../../models/donor';
 import {RequestUser} from '../../../models/user';
 import {AuthService} from '../../../services/auth.service';
 import { isValidEmail, isValidPhone, isValidDocument, isValidBirthdate } from '../../../utils/validators';
+import { toISODate } from '../../../utils/date-utils';
 import { MatIcon } from '@angular/material/icon';
 import { LoadingComponent } from '../../reusable/loading/loading';
 
@@ -117,7 +118,7 @@ export class OrganizerFormComponent implements OnInit {
           this.formPer = {
             firstName: org.firstName,
             lastName: org.lastName,
-            birthdate: org.birthdate,
+            birthdate: toISODate(org.birthdate),
             document: org.document,
             direction: org.direction,
             gender: org.gender,
@@ -306,7 +307,7 @@ export class OrganizerFormComponent implements OnInit {
       return false;
     }
     if (!isValidBirthdate(this.formPer.birthdate)) {
-      this.toast.warning('La fecha de nacimiento debe ser desde 1930');
+      this.toast.warning('Debés tener al menos 18 años para registrarte');
       return false;
     }
     if (!this.formPer.document.trim()) {

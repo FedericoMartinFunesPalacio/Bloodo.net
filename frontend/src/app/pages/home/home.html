@@ -118,10 +118,12 @@
                 <span class="action-icon"><mat-icon>list_alt</mat-icon></span>
                 <span class="action-label">Explorar Campañas</span>
               </a>
-              <a routerLink="/donors/new" class="action-card">
-                <span class="action-icon"><mat-icon>edit</mat-icon></span>
-                <span class="action-label">Editar Mi Perfil</span>
-              </a>
+              @if (editProfileUrl) {
+                <a [routerLink]="editProfileUrl" class="action-card">
+                  <span class="action-icon"><mat-icon>edit</mat-icon></span>
+                  <span class="action-label">Editar Mi Perfil</span>
+                </a>
+              }
             }
           </div>
         </div>
