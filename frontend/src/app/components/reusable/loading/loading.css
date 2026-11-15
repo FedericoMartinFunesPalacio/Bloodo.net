@@ -1,0 +1,59 @@
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12) 0;
+  gap: var(--space-6);
+}
+
+.blood-drop {
+  width: 80px;
+  height: 120px;
+}
+
+.blood-drop svg {
+  width: 100%;
+  height: 100%;
+}
+
+.drop-outline {
+  transition: stroke var(--transition-base);
+}
+
+.blood-fill {
+  fill: var(--color-danger);
+  animation: fillUp 1.8s ease-in-out infinite;
+}
+
+.loading-text {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  margin: 0;
+  animation: textPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes fillUp {
+  0% {
+    transform: translateY(0);
+    opacity: 0.9;
+  }
+  45% {
+    transform: translateY(-180px);
+    opacity: 1;
+  }
+  55% {
+    transform: translateY(-180px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 0.9;
+  }
+}
+
+@keyframes textPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}

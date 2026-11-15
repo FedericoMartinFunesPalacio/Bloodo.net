@@ -1,0 +1,352 @@
+.campaign-detail-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--container-padding);
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  margin-bottom: var(--space-5);
+  padding: var(--space-2) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  transition: color var(--transition-base);
+}
+
+.btn-back:hover {
+  color: var(--color-primary-hover);
+}
+
+.loading {
+  text-align: center;
+  padding: var(--space-16) var(--space-5);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-lg);
+}
+
+.campaign-detail-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-sm);
+}
+
+.campaign-detail-header {
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-5);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.campaign-detail-header h1 {
+  font-size: var(--font-size-3xl);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.campaign-detail-description {
+  font-size: var(--font-size-md);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+  margin: var(--space-5) 0;
+  padding: var(--space-4);
+  background: var(--color-background);
+  border-left: 4px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+}
+
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: var(--space-8);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.tab {
+  flex: 1;
+  padding: var(--space-4) var(--space-5);
+  background: none;
+  border: none;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color var(--transition-base);
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+
+.tab:hover {
+  color: var(--color-primary);
+}
+
+.tab.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.campaign-detail-info {
+  margin: var(--space-8) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.info-section {
+  padding: var(--space-5);
+  background: var(--color-background);
+  border-radius: var(--radius-md);
+}
+
+.info-section h3 {
+  color: var(--color-text);
+  font-size: var(--font-size-lg);
+  margin-top: 0;
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+  font-size: var(--font-size-base);
+}
+
+.info-item:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+}
+
+.value {
+  color: var(--color-text);
+  text-align: right;
+  margin-left: var(--space-3);
+}
+
+.donor-actions {
+  margin: var(--space-8) 0;
+  padding: var(--space-5);
+  background: var(--color-background);
+  border-radius: var(--radius-md);
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn-primary,
+.btn-secondary {
+  border: none;
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-base);
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+  background: var(--color-success);
+  color: white;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+}
+
+.error-message {
+  text-align: center;
+  padding: var(--space-16) var(--space-5);
+  color: var(--color-danger);
+  font-size: var(--font-size-lg);
+}
+
+.metrics-section {
+  margin: var(--space-5) 0;
+}
+
+.metrics-loading {
+  text-align: center;
+  padding: var(--space-10);
+  color: var(--color-text-muted);
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+  margin-bottom: var(--space-8);
+}
+
+.metric-card {
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  color: white;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.metric-card.blood {
+  background: var(--gradient-red);
+}
+
+.metric-card.lives {
+  background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+}
+
+.metric-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-2);
+}
+
+.metric-icon mat-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+}
+
+.metric-value {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.metric-label {
+  font-size: var(--font-size-base);
+  opacity: 0.9;
+  margin-top: var(--space-1);
+}
+
+.metric-sub {
+  font-size: var(--font-size-xs);
+  opacity: 0.7;
+  margin-top: var(--space-2);
+}
+
+.ranking-section {
+  background: var(--color-background);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+}
+
+.ranking-section h3 {
+  color: var(--color-text);
+  font-size: var(--font-size-lg);
+  margin-top: 0;
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-3);
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.ranking-bars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.ranking-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.ranking-label {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  width: 100px;
+  text-align: right;
+}
+
+.ranking-bar-container {
+  flex: 1;
+  height: 16px;
+  background: var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.ranking-bar {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-md);
+  transition: width 0.6s ease;
+}
+
+.ranking-count {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  width: 30px;
+}
+
+.ranking-empty {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-style: italic;
+  padding: var(--space-5);
+}
+
+@media (max-width: 768px) {
+  .campaign-detail-card {
+    padding: var(--space-4);
+  }
+
+  .campaign-detail-header h1 {
+    font-size: var(--font-size-2xl);
+  }
+
+  .tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab {
+    white-space: nowrap;
+    flex: none;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--font-size-sm);
+  }
+
+  .donor-actions {
+    flex-direction: column;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ranking-label {
+    width: 70px;
+    font-size: var(--font-size-sm);
+  }
+}

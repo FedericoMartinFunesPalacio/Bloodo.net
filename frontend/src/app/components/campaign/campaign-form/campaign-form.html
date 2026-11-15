@@ -1,0 +1,119 @@
+<div class="campaign-form-container">
+  <div class="campaign-form-header">
+    <h1>@if (isEditMode) { Editar Campaña } @else { Nueva Campaña }</h1>
+  </div>
+
+  @if (loading) {
+    <app-loading></app-loading>
+  } @else {
+    <form (ngSubmit)="onSubmit()" class="campaign-form">
+      <div class="form-group">
+        <label for="title">Título *</label>
+        <input
+          type="text"
+          id="title"
+          [(ngModel)]="form.title"
+          name="title"
+          placeholder="Ej: Campaña de Donación de Sangre - Junio 2026"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="description">Descripción *</label>
+        <textarea
+          id="description"
+          [(ngModel)]="form.description"
+          name="description"
+          placeholder="Describe los detalles de la campaña..."
+          rows="5"
+          required
+        ></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="startDate">Fecha de Inicio *</label>
+          <input
+            type="date"
+            id="startDate"
+            [(ngModel)]="form.startDate"
+            name="startDate"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="startTime">Horario de Inicio *</label>
+          <input
+            type="time"
+            id="startTime"
+            [(ngModel)]="form.startTime"
+            name="startTime"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="form-row">
+
+
+        <div class="form-group">
+          <label for="direction">Ubicación *</label>
+          <input
+            type="text"
+            id="direction"
+            [(ngModel)]="form.direction"
+            name="direction"
+            placeholder="Ej: Calle Principal 123, Centro Médico"
+            required
+          />
+        </div>
+      </div>
+
+      @if (!isEditMode) {
+        <div class="form-section">
+          <h3>Requisitos de Tipo de Sangre (Opcional)</h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bloodGroupRequired">Grupo Sanguíneo</label>
+              <select
+                id="bloodGroupRequired"
+                [(ngModel)]="form.bloodGroupRequired"
+                name="bloodGroupRequired"
+              >
+                <option [value]="undefined">-- Cualquiera --</option>
+                @for (group of bloodGroups; track group) {
+                  <option [value]="group">{{ group | enumLabel }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="bloodFactorRequired">Factor RH</label>
+              <select
+                id="bloodFactorRequired"
+                [(ngModel)]="form.bloodFactorRequired"
+                name="bloodFactorRequired"
+              >
+                <option [value]="undefined">-- Cualquiera --</option>
+                @for (factor of bloodFactors; track factor) {
+                  <option [value]="factor">{{ factor | enumLabel }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
+      }
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">
+          @if (isEditMode) { Actualizar Campaña } @else { Crear Campaña }
+        </button>
+        <button type="button" class="btn-secondary" (click)="onCancel()">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  }
+</div>

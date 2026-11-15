@@ -1,0 +1,115 @@
+<div class="organizer-list-container">
+  <div class="organizer-list-header">
+    <h1>Organizadores</h1>
+    <button class="btn-primary btn-create" routerLink="/organizers/new">
+      <mat-icon>group_add</mat-icon> Nuevo Organizador
+    </button>
+  </div>
+
+  @if (loading) {
+    <app-loading message="Cargando organizadores..."></app-loading>
+  } @else if (organizers.length === 0) {
+    <div class="empty-state">
+      <p>No hay organizadores registrados</p>
+    </div>
+  } @else {
+    <div class="table-container">
+      <table class="organizer-table">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Nombre</th>
+            <th>Documento</th>
+            <th> Dirección</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (org of organizers; track org.id) {
+            <tr>
+              <td>
+                <span class="type-tag" [class.emp]="org.type === 'EMP'" [class.per]="org.type === 'PER'">
+                  @if (org.type === 'EMP') { <mat-icon>business</mat-icon> Empresa } @else { <mat-icon>person</mat-icon> Persona }
+                </span>
+              </td>
+              <td class="cell-name">{{ org.name }}</td>
+              <td>{{ org.document }}</td>
+              <td>{{ org.direction }}</td>
+              <td>{{ org.email }}</td>
+              <td>{{ org.phoneNumber }}</td>
+              <td>
+                <span class="status" [class.active]="org.isActive" [class.inactive]="!org.isActive">
+                  @if (org.isActive) { Activo } @else { Inactivo }
+                </span>
+              </td>
+              <td class="cell-actions">
+                @if (isAdmin) {
+                  <button class="btn-icon btn-edit" (click)="editOrganizer(org)" title="Editar">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button class="btn-icon btn-delete" (click)="deleteOrganizer(org)" title="Eliminar">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mobile-cards">
+      @for (org of organizers; track org.id) {
+        <div class="org-card-mobile">
+          <div class="org-card-header">
+            <span class="org-card-name">{{ org.name }}</span>
+            <span class="type-tag" [class.emp]="org.type === 'EMP'" [class.per]="org.type === 'PER'">
+              @if (org.type === 'EMP') { Empresa } @else { Persona }
+            </span>
+          </div>
+          <div class="org-card-row">
+            <span class="org-card-label">Documento</span>
+            <span class="org-card-value">{{ org.document }}</span>
+          </div>
+          <div class="org-card-row">
+            <span class="org-card-label">Dirección</span>
+            <span class="org-card-value">{{ org.direction }}</span>
+          </div>
+          <div class="org-card-row">
+            <span class="org-card-label">Email</span>
+            <span class="org-card-value">{{ org.email }}</span>
+          </div>
+          <div class="org-card-row">
+            <span class="org-card-label">Teléfono</span>
+            <span class="org-card-value">{{ org.phoneNumber }}</span>
+          </div>
+          <div class="org-card-row">
+            <span class="org-card-label">Estado</span>
+            <span class="org-card-value">
+              <span class="status" [class.active]="org.isActive" [class.inactive]="!org.isActive">
+                @if (org.isActive) { Activo } @else { Inactivo }
+              </span>
+            </span>
+          </div>
+          @if (isAdmin) {
+            <div class="org-card-actions">
+              <button class="btn-icon btn-edit" (click)="editOrganizer(org)" title="Editar">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button class="btn-icon btn-delete" (click)="deleteOrganizer(org)" title="Eliminar">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="table-footer">
+      <span>Total: {{ organizers.length }} organizador(es)</span>
+    </div>
+  }
+</div>

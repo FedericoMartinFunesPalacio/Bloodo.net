@@ -1,0 +1,327 @@
+<div class="my-campaigns-container">
+  <div class="my-campaigns-header" id="tour-my-campaigns-header">
+    <h1>Mis Campañas</h1>
+    <button class="btn-primary btn-create" routerLink="/campaigns/new">
+      <mat-icon>add</mat-icon> Nueva Campaña
+    </button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab" [class.active]="activeTab === 'info'" (click)="switchTab('info')">
+      Campañas
+    </button>
+    <button class="tab" [class.active]="activeTab === 'metrics'" [class.disabled]="!hasFinishedCampaigns" (click)="onMetricsTabClick()">
+      Métricas
+    </button>
+  </div>
+
+  @if (activeTab === 'info') {
+    @if (loading) {
+      <app-loading message="Cargando tus campañas..."></app-loading>
+    } @else if (activeCampaigns.length === 0) {
+      <div class="empty-state">
+        <p>No tenés campañas activas</p>
+        <button class="btn-primary" routerLink="/campaigns/new">Crear una nueva campaña</button>
+      </div>
+    } @else {
+      <div class="campaigns-grid" id="tour-my-campaigns-cards">
+        @for (campaign of activeCampaigns; track campaign.id) {
+          <div class="campaign-card">
+            <div class="campaign-header">
+              <h2>{{ campaign.title }}</h2>
+            </div>
+
+            <p class="campaign-description">{{ campaign.description }}</p>
+
+            <div class="campaign-details">
+              <div class="detail-item">
+                <span class="label">Fecha Inicio:</span>
+                <span class="value">{{ campaign.startDate }}</span>
+              </div>
+              @if (campaign.endDate) {
+                <div class="detail-item">
+                  <span class="label">Fecha Fin:</span>
+                  <span class="value">{{ campaign.endDate }}</span>
+                </div>
+              }
+              <div class="detail-item">
+                <span class="label">Horario:</span>
+                <span class="value">{{ campaign.startTime }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Ubicación:</span>
+                <span class="value">{{ campaign.direction }}</span>
+              </div>
+              @if (campaign.bloodGroupRequired || campaign.bloodFactorRequired) {
+                <div class="detail-item">
+                  <span class="label">Tipo de Sangre Requerido:</span>
+                  <span class="value">
+                    {{ (campaign.bloodGroupRequired || 'Cualquiera') | enumLabel }} -
+                    {{ (campaign.bloodFactorRequired || 'Cualquiera') | enumLabel }}
+                  </span>
+                </div>
+              }
+            </div>
+
+            <div class="campaign-actions">
+              <button class="btn-action btn-view" (click)="viewCampaignDetail(campaign.id)" title="Ver Detalle">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
+              <button class="btn-action btn-subscribers" (click)="toggleSubscribedList(campaign.id)" title="Ver Suscritos">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              </button>
+              <button class="btn-action btn-edit" (click)="editCampaign(campaign.id)" title="Editar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path><path d="m15 5 4 4"></path></svg>
+              </button>
+              <button class="btn-action btn-finish" (click)="openFinishModal(campaign.id)" title="Finalizar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              </button>
+              <button class="btn-action btn-delete" (click)="deleteCampaign(campaign.id)" title="Eliminar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              </button>
+            </div>
+
+            @if (showSubscribedList && selectedCampaignId === campaign.id) {
+              <div class="subscribed-section">
+                <h3>Donadores Suscritos ({{ subscribedDonors.length }})</h3>
+                @if (subscribedDonors.length === 0) {
+                  <p class="empty-list">No hay donadores suscritos aún</p>
+                } @else {
+                  <div class="donors-table">
+                    <div class="table-header">
+                      <div class="table-cell col-name">Nombre</div>
+                      <div class="table-cell col-email">Email</div>
+                      <div class="table-cell col-phone">Teléfono</div>
+                      <div class="table-cell col-doc">Documento</div>
+                    </div>
+                    @for (donor of subscribedDonors; track donor.document) {
+                      <div class="table-row">
+                        <div class="table-cell col-name">{{ donor.firstName }} {{ donor.lastName }}</div>
+                        <div class="table-cell col-email">{{ donor.email }}</div>
+                        <div class="table-cell col-phone">{{ donor.phoneNumber }}</div>
+                        <div class="table-cell col-doc">{{ donor.document }}</div>
+                      </div>
+                    }
+                  </div>
+
+                  <div class="mobile-subscribed-cards">
+                    @for (donor of subscribedDonors; track donor.document) {
+                      <div class="subscribed-card-mobile">
+                        <div class="subscribed-card-name">{{ donor.firstName }} {{ donor.lastName }}</div>
+                        <div class="subscribed-card-row">
+                          <span class="subscribed-card-label">Email</span>
+                          <span class="subscribed-card-value">{{ donor.email }}</span>
+                        </div>
+                        <div class="subscribed-card-row">
+                          <span class="subscribed-card-label">Teléfono</span>
+                          <span class="subscribed-card-value">{{ donor.phoneNumber }}</span>
+                        </div>
+                        <div class="subscribed-card-row">
+                          <span class="subscribed-card-label">Documento</span>
+                          <span class="subscribed-card-value">{{ donor.document }}</span>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+
+  @if (activeTab === 'metrics') {
+    @if (metricsLoading) {
+      <app-loading message="Cargando métricas..."></app-loading>
+    } @else {
+
+      <div class="metrics-section-label">Donación</div>
+
+      <div class="donation-row">
+        @if (bloodTotal) {
+          <div class="donation-card blood-drop-card" id="tour-blood-drop">
+            <div class="blood-drop-wrapper">
+              <div class="blood-drop-svg">
+                <svg viewBox="0 0 120 180" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <clipPath id="dropClip">
+                      <path d="M60 10 C60 10, 15 90, 15 120 C15 150, 35 170, 60 170 C85 170, 105 150, 105 120 C105 90, 60 10, 60 10Z"/>
+                    </clipPath>
+                  </defs>
+                  <path class="drop-outline" d="M60 10 C60 10, 15 90, 15 120 C15 150, 35 170, 60 170 C85 170, 105 150, 105 120 C105 90, 60 10, 60 10Z" fill="none" stroke="var(--color-border)" stroke-width="3"/>
+                  <g clip-path="url(#dropClip)">
+                    <rect class="blood-fill" x="0" y="170" width="120" height="170" [style.transform]="'translateY(-' + fillHeight + 'px)'"/>
+                  </g>
+                </svg>
+                <div class="blood-drop-number">{{ bloodTotal.estimatedLiters | number:'1.1-1' }}<span class="blood-drop-unit">L</span></div>
+              </div>
+              <div class="blood-drop-label">
+                <div class="blood-drop-title">Sangre recolectada</div>
+                <div class="blood-drop-sub">{{ bloodTotal.totalSubscribers }} donaciones en {{ bloodTotal.totalCampaigns }} campañas finalizadas</div>
+              </div>
+            </div>
+          </div>
+        }
+
+        @if (bloodTypePercentages.length > 0) {
+          <div class="donation-card pie-card">
+            <div class="pie-header">Distribución de Tipos de Sangre</div>
+            <div class="pie-chart-wrapper">
+              <div class="pie-chart-area">
+                <div class="pie-chart" [style.background]="pieGradient">
+                  <div class="pie-hole"></div>
+                </div>
+              </div>
+              <div class="pie-legend">
+                @for (bt of bloodTypePercentages; track bt.bloodType; let i = $index) {
+                  <div class="pie-legend-item">
+                    <span class="pie-legend-dot" [style.background]="getBtColor(i)"></span>
+                    <span class="pie-legend-label">{{ bt.bloodType | enumLabel }}</span>
+                    <span class="pie-legend-pct">{{ bt.percentage | number:'1.1-1' }}%</span>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (livesTotal) {
+        <div class="donation-card lives-card" id="tour-lives-saved">
+          <div class="lives-row">
+            <div class="lives-heart-wrapper">
+              <svg class="lives-heart" viewBox="0 0 24 24" fill="var(--color-red-500)" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </div>
+            <div class="lives-info">
+              <div class="lives-value">{{ livesTotal.estimatedLivesSaved }}</div>
+              <div class="lives-label">Vidas estimadas salvadas</div>
+              <div class="lives-sub">{{ livesTotal.totalSubscribers }} donadores × 3 vidas por donación</div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <div class="metrics-section-label">Campañas</div>
+
+      @if (campaignCount > 0) {
+        <div class="donation-card campaigns-overview-card">
+          <div class="campaigns-overview-header">
+            <div class="campaigns-overview-title">Campañas creadas</div>
+            <div class="campaigns-overview-total">{{ campaignCount }}</div>
+          </div>
+          <div class="campaigns-bar-wrapper">
+            <div class="campaigns-bar">
+              <div class="campaigns-bar-finished" [style.width.%]="campaignCount > 0 ? (finishedCount / campaignCount) * 100 : 0"></div>
+            </div>
+            <div class="campaigns-bar-labels">
+              <div class="campaigns-bar-label-finished">
+                <span class="campaigns-bar-dot finished"></span>
+                Finalizadas: {{ finishedCount }}
+              </div>
+              <div class="campaigns-bar-label-active">
+                <span class="campaigns-bar-dot active"></span>
+                Activas: {{ campaignCount - finishedCount }}
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <div class="donation-card wide-card">
+        <div class="wide-card-row">
+          <div class="wide-card-icon">
+            <mat-icon>group</mat-icon>
+          </div>
+          <div class="wide-card-info">
+            <div class="wide-card-value">{{ totalDonors }}</div>
+            <div class="wide-card-label">Total donadores en campañas finalizadas</div>
+          </div>
+        </div>
+      </div>
+
+      @if (campaignCount > 0) {
+        <div class="donation-card wide-card">
+          <div class="wide-card-header">Promedio donadores por campaña</div>
+          <div class="hbar-list">
+            <div class="hbar-row">
+              <div class="hbar-label">Promedio</div>
+              <div class="hbar-track">
+                <div class="hbar-fill" [style.width.%]="getVBarHeight()"></div>
+              </div>
+              <div class="hbar-value">{{ averageDonors | number:'1.1-1' }}</div>
+            </div>
+            @if (totalDonors > 0) {
+              <div class="hbar-row">
+                <div class="hbar-label">Total donadores</div>
+                <div class="hbar-track">
+                  <div class="hbar-fill total" style="width: 100%"></div>
+                </div>
+                <div class="hbar-value">{{ totalDonors }}</div>
+              </div>
+            }
+            @if (finishedCount > 0) {
+              <div class="hbar-row">
+                <div class="hbar-label">Campañas finalizadas</div>
+                <div class="hbar-track">
+                  <div class="hbar-fill total" style="width: 100%"></div>
+                </div>
+                <div class="hbar-value">{{ finishedCount }}</div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      @if (geoDistribution.length > 0) {
+        <div class="donation-card">
+          <div class="metrics-section-title">
+            <mat-icon>location_on</mat-icon> Ubicación de Campañas
+          </div>
+          <div class="geo-list">
+            @for (loc of geoDistribution; track loc.campaignId) {
+              <div class="geo-item">
+                <span class="geo-icon">
+                  @if (loc.isActive) { <mat-icon>radio_button_checked</mat-icon> }
+                  @else if (loc.isFinished) { <mat-icon>check_circle</mat-icon> }
+                  @else { <mat-icon>radio_button_unchecked</mat-icon> }
+                </span>
+                <div class="geo-info">
+                  <span class="geo-title">{{ loc.title }}</span>
+                  <span class="geo-direction">{{ loc.direction }}</span>
+                </div>
+                <a class="geo-map-link" [href]="'https://www.google.com/maps?q=' + loc.latitude + ',' + loc.longitude" target="_blank" rel="noopener">
+                  <mat-icon>map</mat-icon>
+                </a>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    }
+  }
+</div>
+
+@if (finishCampaignId) {
+  <div class="modal-overlay" (click)="closeFinishModal()">
+    <div class="modal-content finish-modal" (click)="$event.stopPropagation()">
+      <div class="finish-modal-header">
+        <span class="finish-modal-icon"><mat-icon>check_circle</mat-icon></span>
+        <h2>Finalizar Campaña</h2>
+        <button class="finish-modal-close" (click)="closeFinishModal()"><mat-icon>close</mat-icon></button>
+      </div>
+      <p class="finish-modal-description">Seleccioná la fecha de finalización de la campaña:</p>
+      <div class="finish-modal-input-group">
+        <label>Fecha de finalización</label>
+        <input type="date" [(ngModel)]="finishDate" class="finish-date-input" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel-modal" (click)="closeFinishModal()">Cancelar</button>
+        <button class="btn-confirm-modal" (click)="confirmFinish()">Finalizar</button>
+      </div>
+    </div>
+  </div>
+}

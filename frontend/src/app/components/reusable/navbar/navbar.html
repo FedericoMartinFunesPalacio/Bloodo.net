@@ -1,0 +1,136 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <div class="navbar-brand">
+      @if (currentUser) {
+        <a routerLink="/home" class="brand-logo"><mat-icon>bloodtype</mat-icon> Bloodo.net</a>
+      } @else {
+        <a routerLink="/" class="brand-logo"><mat-icon>bloodtype</mat-icon> Bloodo.net</a>
+      }
+    </div>
+
+    <button class="menu-toggle" (click)="toggleMenu()">
+      @if (menuOpen) { <mat-icon>close</mat-icon> } @else { <mat-icon>menu</mat-icon> }
+    </button>
+
+    <ul class="nav-menu" [class.active]="menuOpen">
+      @if (currentUser) {
+        <li class="nav-item">
+          <a id="tour-campanas" routerLink="/campaigns" (click)="closeMenu()" routerLinkActive="active">
+            Campañas
+          </a>
+        </li>
+
+        @if (isOrganizer || isAdmin) {
+          <li class="nav-item">
+            <a id="tour-mis-campanas" routerLink="/my-campaigns" (click)="closeMenu()" routerLinkActive="active">
+              Mis Campañas
+            </a>
+          </li>
+        }
+
+        @if (isDonor) {
+          <li class="nav-item">
+            <a id="tour-mis-donaciones" routerLink="/my-donations" (click)="closeMenu()" routerLinkActive="active">
+              Mis Donaciones
+            </a>
+          </li>
+        }
+
+        @if (isAdmin && false) {
+          <li class="nav-item">
+            <a routerLink="/donors/new" (click)="closeMenu()" routerLinkActive="active">
+              Registrar Donador
+            </a>
+          </li>
+        }
+
+        @if (isAdmin) {
+          <li class="nav-item">
+            <a routerLink="/donors" (click)="closeMenu()" routerLinkActive="active">
+              Donadores
+            </a>
+          </li>
+        }
+
+        @if (isAdmin && false) {
+          <li class="nav-item">
+            <a routerLink="/organizers/new" (click)="closeMenu()" routerLinkActive="active">
+              Registrar Organizador
+            </a>
+          </li>
+        }
+
+        @if (isAdmin) {
+          <li class="nav-item">
+            <a routerLink="/organizers" (click)="closeMenu()" routerLinkActive="active">
+              Organizadores
+            </a>
+          </li>
+        }
+
+        @if (isAdmin) {
+          <li class="nav-item">
+            <a routerLink="/home" (click)="closeMenu()" routerLinkActive="active">
+              Panel Admin
+            </a>
+          </li>
+        }
+
+        <li class="nav-item nav-donate">
+          <app-donate-modal #donateModal></app-donate-modal>
+          <button id="tour-donar" class="btn-donate" (click)="donateModal.open(); closeMenu()">
+            <mat-icon>favorite</mat-icon> Donar
+          </button>
+        </li>
+      }
+    </ul>
+
+    @if (currentUser) {
+      <div class="actions-wrapper">
+        <app-notification-bell></app-notification-bell>
+        <button class="btn-help" (click)="startTour()" title="Ayuda">
+          <mat-icon>help_outline</mat-icon>
+        </button>
+        <div class="profile-wrapper">
+          <button class="btn-profile" (click)="toggleProfile()">
+            <mat-icon>person</mat-icon>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</nav>
+
+@if (profileOpen && currentUser) {
+  <div class="profile-dropdown-backdrop" (click)="closeProfile()"></div>
+  <div class="profile-dropdown-portal">
+    <div class="profile-dropdown">
+      <div class="profile-header">
+        <span class="profile-username">{{ currentUser.username }}</span>
+        @if (profileFirstName || profileLastName) {
+          <span class="profile-fullname">{{ profileFirstName }} {{ profileLastName }}</span>
+        }
+      </div>
+      <div class="profile-details">
+        <div class="profile-detail">
+          <mat-icon>email</mat-icon>
+          <span>{{ currentUser.email }}</span>
+        </div>
+        <div class="profile-detail">
+          <mat-icon>phone</mat-icon>
+          <span>{{ currentUser.phone }}</span>
+        </div>
+      </div>
+      <div class="profile-actions">
+        @if (editProfileUrl) {
+          <a [routerLink]="editProfileUrl" class="profile-action" (click)="closeProfile()" title="Editar Perfil">
+            <mat-icon>edit</mat-icon>
+          </a>
+        }
+        <button class="profile-action" (click)="logout()" title="Cerrar Sesión">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+}

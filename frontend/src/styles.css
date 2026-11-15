@@ -1,7 +1,73 @@
-/* You can add global styles to this file, and also import other style files */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('./styles/variables.css');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background-color: var(--color-background);
+  line-height: var(--line-height-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+}
+
+/* ── Shared Utility Classes ── */
+
+mat-icon {
+  vertical-align: middle;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+}
+
+/* ── Guided Tour Theme ── */
+:root {
+  --guided-tour-primary: #2563eb;
+  --guided-tour-bg: linear-gradient(160deg, #1e3a5f 0%, #1a2d4a 50%, #152238 100%);
+  --guided-tour-text: #fff;
+  --guided-tour-text-secondary: rgba(255, 255, 255, 0.85);
+  --guided-tour-text-muted: rgba(255, 255, 255, 0.5);
+  --guided-tour-border: rgba(255, 255, 255, 0.12);
+  --guided-tour-divider: rgba(255, 255, 255, 0.08);
+  --guided-tour-arrow-bg: #1a2d4a;
+}
+
+.guided-tour-popover__footer {
+  display: none !important;
+}
+
+.guided-tour-popover {
+  cursor: pointer;
+  position: relative;
+}
+
+.guided-tour-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: var(--guided-tour-primary);
+  border-radius: 0 2px 0 0;
+  width: 0%;
+  transition: none;
+}
